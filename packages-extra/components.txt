@@ -1,0 +1,1 @@
+lazarus-ccr-svn-r7211-components-richmemo.zip at https://sourceforge.net/p/lazarus-ccr/svn/HEAD/tree/components/richmemo/ (2019-12-27)
