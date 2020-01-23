@@ -1,0 +1,24 @@
+Credits :
+-----------------------------------
+Icon made by Freepik from www.flaticon.com
+Icon made by Nikita Golubev from www.flaticon.com
+Icon made by Pixel perfect from www.flaticon.com
+Icon made by Roundicons from www.flaticon.com
+Icon made by Smashicons from www.flaticon.com
+Icon made by srip from www.flaticon.com
+
+Images :
+-----------------------------------
+add-file.png : Icon made by Smashicons from www.flaticon.com
+copy.png : Icon made by srip from www.flaticon.com
+cut.png : Icon made by Smashicons from www.flaticon.com
+data-table.png : Icon made by Freepik from www.flaticon.com
+edit.png : Icon made by srip from www.flaticon.com
+folder.png : Icon made by Freepik from www.flaticon.com
+info.png : Icon made by Roundicons from www.flaticon.com
+paste.png : Icon made by Smashicons from www.flaticon.com
+printer.png : Icon made by Nikita Golubev from www.flaticon.com
+redo.png : Icon made by Pixel perfect from www.flaticon.com
+save.png : Icon made by Smashicons from www.flaticon.com
+typography : Icon made by Freepik from www.flaticon.com
+undo.png : Icon made by Pixel perfect from www.flaticon.com
