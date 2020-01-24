@@ -33,7 +33,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, ComCtrls, Dialogs, StdCtrls, RichMemo,
-  LCLType, Messages, rz_an_pas_var, rz_an_pas_opendialog, rz_an_pas_savedialog, rz_an_cmp_statusbar,
+  LCLType, Messages, Clipbrd, rz_an_pas_var, rz_an_pas_opendialog, rz_an_pas_savedialog, rz_an_cmp_statusbar,
   rz_an_pas_reserved_word, rz_an_pas_language;
 
 type
@@ -53,6 +53,7 @@ type
     FStatusBar : TRZANStatusBar;
     FStyle : rz_an_type_Style;
     FTabSheet : TTabSheet;
+    FClipboard : TClipboard;
     procedure _SetTabSet;
     procedure _SetStatusBarCaret;
     procedure _SetStyle (AStyle : rz_an_type_Style);
@@ -147,6 +148,7 @@ begin
   Self.Color := clWhite;
   Self.ScrollBars := ssBoth;
   Self._SetTabSet;
+  Self.FClipboard := TClipboard.Create;
 end;
 
 {Privates}
@@ -343,17 +345,19 @@ end;
 
 procedure TRZANCustomRichMemo.DoCopy;
 begin
-  Self.CopyToClipboard;
+  Self.FClipboard.Clear;
+  Self.FClipboard.AsText := Self.SelText;
 end;
 
 procedure TRZANCustomRichMemo.DoCut;
 begin
-  Self.CutToClipboard;
+  Self.FClipboard.AsText := Self.SelText;
+  Self.SelText := '';
 end;
 
 procedure TRZANCustomRichMemo.DoPaste;
 begin
-  Self.PasteFromClipboard;
+  Self.SelText := Self.FClipboard.AsText;
 end;
 
 procedure TRZANCustomRichMemo.DoSelectAll;
