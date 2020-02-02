@@ -33,364 +33,268 @@ interface
 
 uses
   Classes, SysUtils, ComCtrls, Controls, Dialogs, Graphics, rz_an_cmp_statusbar,
-  rz_an_pas_opendialog, rz_an_pas_savedialog, rz_an_pas_reserved_word, rz_an_pas_language, rz_an_pas_var,
-  rz_an_pas_tabsheet;
+  rz_an_pas_opendialog, rz_an_pas_savedialog, rz_an_pas_reserved_word, rz_an_pas_language,
+  rz_an_pas_var, rz_an_pas_tabsheet, rz_an_pas_tools, rz_an_cmp_richmemo;
 
 type
 
   TRZANCustomPageControl = class(TPageControl)
   private
-    {Properties - StatusBar}
-    FActiveStatus : rz_an_type_Status;
-    FActiveLanguage : rz_an_type_Language;
-    FActiveCaretPosX : Integer;
-    FActiveCaretPosY : Integer;
-    FActiveFileName : TFileName;
-    FActiveFileNameOnly : string;
-    FActiveFileNameExt : string;
-    {Properties - Misc}
-    FPageInit : Boolean;
-    FPageIndex : Byte;
-    FPageCount : Byte;
-    FDoParsing :Boolean;
+    {Properties}
+    FRZTabInit : Boolean;
+    FRZTabId : Byte;
+    FRZDoParsing :Boolean;
     {Sub-Components}
-    FStatusBar : TRZANStatusBar;
+    FRZEditor : TRZANRichMemo;
+    FRZStatusBar : TRZANStatusBar;
   protected
-    {Events - StatusBar}
-    function GetActiveStatus : rz_an_type_Status;
-    procedure SetActiveStatus (const AValue: rz_an_type_Status);
-    function GetActiveCaretPosX : Integer;
-    procedure SetActiveCaretPosX (const AValue: Integer);
-    function GetActiveCaretPosY : Integer;
-    procedure SetActiveCaretPosY (const AValue: Integer);
-    function GetActiveLanguage : rz_an_type_Language;
-    procedure SetActiveLanguage (const AValue: rz_an_type_Language);
-    function GetActiveFileName : TFileName;
-    procedure SetActiveFileName (const AValue: TFileName);
-    function GetActiveFileNameOnly : string;
-    procedure SetActiveFileNameOnly (const AValue: string);
-    function GetActiveFileNameExt : string;
-    procedure SetActiveFileNameExt (const AValue: string);
-    {Events - Misc}
-    function GetPageIndex : Byte;
-    procedure SetPageIndex (const AValue: Byte);
-    function GetDoParsing : Boolean;
-    procedure SetDoParsing (const AValue: Boolean);
-    {Properties - StatusBar}
-    property ActiveStatus : rz_an_type_Status read GetActiveStatus write SetActiveStatus;
-    property ActiveCaretPosX : Integer read GetActiveCaretPosX write SetActiveCaretPosX;
-    property ActiveCaretPosY : Integer read GetActiveCaretPosY write SetActiveCaretPosY;
-    property ActiveLanguage : rz_an_type_Language read GetActiveLanguage write SetActiveLanguage;
-    property ActiveFileName : TFileName read GetActiveFileName write SetActiveFileName;
-    property ActiveFileNameOnly : string read GetActiveFileNameOnly write SetActiveFileNameOnly;
-    property ActiveFileNameExt : string read GetActiveFileNameExt write SetActiveFileNameExt;
-    {Properties - Misc}
-    property PageInit : Boolean read FPageInit write FPageInit;
-    property PageIndex : Byte read FPageIndex write FPageIndex;
-    property PageCount : Byte read FPageCount write FPageCount;
-    property DoParsing : Boolean read GetDoParsing write SetDoParsing;
+    procedure SetRZDoParsing (AValue : Boolean);
+    {Properties}
+    property RZTabInit : Boolean read FRZTabInit write FRZTabInit;
+    property RZTabId : Byte read FRZTabId write FRZTabId;
+    property RZDoParsing : Boolean read FRZDoParsing write SetRZDoParsing;
     {Sub-Components}
-    property StatusBar : TRZANStatusBar read FStatusBar write FStatusBar;
+    property RZEditor : TRZANRichMemo read FRZEditor write FRZEditor;
+    property RZANStatusBar : TRZANStatusBar read FRZStatusBar write FRZStatusBar;
   public
     {Sub-Components}
-    OpenDialog : TRZANOpenDialog;
-    SaveDialog : TRZANSaveDialog;
-    TabSheet : array[0..100] of TRZANTabSheet;
-    {Methods}
+    RZANOpenDialog : TRZANOpenDialog;
+    RZANSaveDialog : TRZANSaveDialog;
+    {Create}
     constructor Create (AOwner : TComponent); override;
-    procedure AddSheet;
-    procedure CloseActiveSheet;
-    procedure OpenFile;
-    procedure SaveFile;
-    procedure SaveAsFile;
-    procedure SetNewLanguage (ALanguage : rz_an_type_Language);
-    procedure SubComponentUpdate;
-    procedure Undo;
-    procedure Redo;
-    procedure Copy;
-    procedure Cut;
-    procedure Paste;
-    procedure SelectAll;
+    {Add & Close Sheet}
+    procedure RZAddSheet (AFileName : TFileName);
+    procedure RZANCloseSheet;
+    {Open and Save File}
+    procedure RZOpenFile;
+    procedure RZSaveFile;
+    procedure RZSaveAsFile;
+    {Text Editing}
+    procedure RZTextEditing (AType : string);
+    procedure RZUndo;
+    procedure RZRedo;
+    procedure RZCopy;
+    procedure RZCut;
+    procedure RZPaste;
+    procedure RZSelectAll;
+    {Language}
+    procedure RZSetNewLanguage (ALanguage : rz_an_type_Language);
+    {Style}
+    procedure RZSetNewStyle (AStyle : rz_an_type_Style);
     {Events}
     procedure Change; override;
+    {Methods}
+    procedure RZGetRZEditor (APage : TTabSheet);
   end;
 
   TRZANPageControl = class(TRZANCustomPageControl)
+  public
+    property RZTabId;
+    property RZEditor;
   published
-    property StatusBar;
+    property RZANStatusBar;
   end;
 
 implementation
 
-{Methods}
+{Create}
 
 constructor TRZANCustomPageControl.Create (AOwner : TComponent);
 begin
   inherited Create(AOwner);
   {Sub-Components}
-  Self.OpenDialog := TRZANOpenDialog.Create(Self);
-  Self.SaveDialog := TRZANSaveDialog.Create(Self);
+  Self.RZANOpenDialog := TRZANOpenDialog.Create(Self);
+  Self.RZANSaveDialog := TRZANSaveDialog.Create(Self);
   {Properties}
   Self.ImagesWidth := 24;
-  Self.PageInit := True;
-  Self.PageIndex := -1;
-  Self.PageCount := 0;
+  {RZANTabInit will be used to load file to existing editor at first app start}
+  Self.RZTabInit := True;
+  {RZANTabId will be used to set tab sheet number when added}
+  Self.RZTabId := 0;
 end;
 
-procedure TRZANCustomPageControl.AddSheet;
+{Get RZEditor}
+
+procedure TRZANCustomPageControl.RZGetRZEditor (APage : TTabSheet);
+var
+  i : Byte;
 begin
-  {Initialize}
-  Self.PageIndex := Self.PageIndex + 1;
-  {Create New Tab}
-  Self.TabSheet[Self.PageIndex] := TRZANTabSheet.Create(Self);
-  Self.TabSheet[Self.PageIndex].Parent := Self;
-  if Self.PageIndex > 0 then
-    TabSheet[Self.PageIndex].Caption := 'Note' + IntToStr(Self.PageIndex)
-  else
-    TabSheet[Self.PageIndex].Caption := 'Note'
+  // The result will be stored at RZEditor property
+  for i := 0 to APage.ControlCount - 1 do
+  begin
+    if (APage.Controls[i].ClassName) = 'TRZANRichMemo' then
+      Self.RZEditor := Self.Pages[Self.PageIndex].Controls[i] as TRZANRichMemo
+    ;
+  end;
+end;
+
+{Add & Close Sheet}
+
+procedure TRZANCustomPageControl.RZAddSheet (AFileName : TFileName);
+var
+  LRZTabSheet : TRZANTabSheet;
+begin
+  LRZTabSheet := TRZANTabSheet.Create(Self);
+  LRZTabSheet.Parent := Self;
+  if Self.RZTabId = 0 then LRZTabSheet.Caption := 'Note'
+    else LRZTabSheet.Caption := 'Note' + IntToStr(Self.RZTabId)
   ;
-  Self.TabSheet[Self.PageIndex].ImageIndex := 8;
-  Self.TabSheet[Self.PageIndex].Name := 'TabSheet' + IntToStr(Self.PageIndex);
-  {Sub-Components}
-  Self.TabSheet[Self.PageIndex].StatusBar := Self.StatusBar;
-  {Finalize}
-  Self.ActiveStatus := rz_an_type_status_Ready;
-  Self.ActivePage := Self.TabSheet[Self.PageIndex];
-  Self.PageCount := Self.PageCount + 1;
-end;
-
-procedure TRZANCustomPageControl.CloseActiveSheet;
-begin
-  if Self.PageCount > 1 then
+  LRZTabSheet.ImageIndex := 8;
+  LRZTabSheet.RZEditor.RZANStatusBar := Self.RZANStatusBar;
+  if Trim(AFileName) <> '' then
   begin
-    Self.Pages[Self.ActivePageIndex].Free;
-    Self.PageCount := Self.PageCount - 1;
-  end;
-end;
-
-procedure TRZANCustomPageControl.OpenFile;
-begin
-  if Self.OpenDialog.Execute then
-  begin
-    if not(Self.PageInit) then Self.AddSheet;
-    Self.ActiveFileName := Self.OpenDialog.FileName;
-    Self.TabSheet[Self.TabIndex].OpenFile(Self.ActiveFileName);
-    Self.ActiveStatus := rz_an_type_status_Ready;
-    Self.PageInit := False;
-  end;
-end;
-
-procedure TRZANCustomPageControl.SaveFile;
-begin
-  if Trim(Self.ActiveFileName) = '' then
-  begin
-    Self.SaveAsFile
+    LRZTabSheet.RZFileName := AFileName;
+    LRZTabSheet.RZEditor.RZOpen(AFileName);
   end
   else
   begin
-    Self.TabSheet[Self.TabIndex].SaveFile(Self.ActiveFileName);
-    Self.ActiveStatus := rz_an_type_status_Saved;
+    LRZTabSheet.RZFileName := '';
   end;
+  LRZTabSheet.RZEditor.RZStatus := rz_an_type_status_Ready;
+  LRZTabSheet.Show;
+  Self.RZTabId := Self.RZTabId + 1;
 end;
 
-procedure TRZANCustomPageControl.SaveAsFile;
+procedure TRZANCustomPageControl.RZANCloseSheet;
 begin
-  if Self.SaveDialog.Execute then
+  if Self.PageCount > 1 then Self.Pages[Self.ActivePageIndex].Free;
+end;
+
+{Open and Save File}
+
+procedure TRZANCustomPageControl.RZOpenFile;
+var
+  LFileName : TFileName;
+begin
+  Self.RZGetRZEditor(Self.Pages[Self.PageIndex]);
+  Self.RZANOpenDialog.FilterIndex := Ord(Self.RZEditor.RZLanguage) + 1; // Filter Index begin at 1
+  if Self.RZANOpenDialog.Execute then
   begin
-    Self.ActiveFileName := Self.SaveDialog.FileName;
-    Self.TabSheet[Self.TabIndex].SaveFile(Self.ActiveFileName);
-    Self.ActiveStatus := rz_an_type_status_Saved;
+    LFileName := Self.RZANOpenDialog.FileName;
+    if (Self.RZTabInit) and (Self.RZEditor.RZStatus = rz_an_type_status_Ready) then
+    begin
+      Self.RZEditor.RZOpen(LFileName);
+      Self.Pages[Self.ActivePageIndex].Caption := ExtractFileName(LFileName);
+      Self.RZTabInit := False;
+    end
+    else
+      Self.RZAddSheet(LFileName)
+    ;
   end;
+  Self.RZEditor.RZStatus := rz_an_type_status_Ready;
 end;
 
-procedure TRZANCustomPageControl.SetNewLanguage (ALanguage : rz_an_type_Language);
+procedure TRZANCustomPageControl.RZSaveFile;
 begin
-  Self.DoParsing := True;
-  Self.ActiveLanguage := ALanguage;
-end;
-
-procedure TRZANCustomPageControl.SubComponentUpdate;
-begin
-  Self.TabSheet[Self.TabIndex].SubComponentUpdate;
-  Self.ActiveStatus := Self.TabSheet[Self.TabIndex].Status;
-  Self.ActiveCaretPosX := Self.TabSheet[Self.TabIndex].CaretPosX;
-  Self.ActiveCaretPosY := Self.TabSheet[Self.TabIndex].CaretPosY;
-end;
-
-{Properties - StatusBar}
-
-function TRZANCustomPageControl.GetActiveStatus : rz_an_type_Status;
-begin
-  Result := Self.FActiveStatus;
-end;
-
-procedure TRZANCustomPageControl.SetActiveStatus (const AValue : rz_an_type_Status);
-begin
-  Self.FActiveStatus := AValue;
-  if Self.ActiveStatus = rz_an_type_status_Modified then Self.PageInit := False;
-  Self.TabSheet[Self.TabIndex].Status := Self.ActiveStatus;
-end;
-
-function TRZANCustomPageControl.GetActiveCaretPosX : Integer;
-begin
-  Result := Self.FActiveCaretPosX;
-end;
-
-procedure TRZANCustomPageControl.SetActiveCaretPosX (const AValue : Integer);
-begin
-  Self.FActiveCaretPosX := AValue;
-  Self.TabSheet[Self.TabIndex].CaretPosX := Self.ActiveCaretPosX;
-end;
-
-function TRZANCustomPageControl.GetActiveCaretPosY : Integer;
-begin
-  Result := Self.FActiveCaretPosY;
-end;
-
-procedure TRZANCustomPageControl.SetActiveCaretPosY (const AValue : Integer);
-begin
-  Self.FActiveCaretPosY := AValue;
-  Self.TabSheet[Self.TabIndex].CaretPosY := Self.ActiveCaretPosY;
-end;
-
-function TRZANCustomPageControl.GetActiveLanguage : rz_an_type_Language;
-begin
-  Result := Self.FActiveLanguage;
-end;
-
-procedure TRZANCustomPageControl.SetActiveLanguage (const AValue: rz_an_type_Language);
-begin
-  Self.FActiveLanguage := AValue;
-  Self.TabSheet[Self.TabIndex].Language := Self.ActiveLanguage;
-end;
-
-function TRZANCustomPageControl.GetActiveFileName : TFileName;
-begin
-  Result := Self.FActiveFileName;
-end;
-
-procedure TRZANCustomPageControl.SetActiveFileName (const AValue: TFileName);
-begin
-  Self.FActiveFileName := AValue;
-  Self.ActiveFileNameOnly := ExtractFileName(Self.ActiveFileName);
-  Self.ActiveFileNameExt := ExtractFileExt(Self.ActiveFileName);
-  // TEST : DELETE ?
-  Self.TabSheet[Self.TabIndex].FileName := Self.ActiveFileName;
-end;
-
-function TRZANCustomPageControl.GetActiveFileNameOnly : string;
-begin
-  Result := Self.FActiveFileNameOnly;
-end;
-
-procedure TRZANCustomPageControl.SetActiveFileNameOnly (const AValue: string);
-begin
-  Self.FActiveFileNameOnly := AValue;
-end;
-
-function TRZANCustomPageControl.GetActiveFileNameExt : string;
-begin
-  Result := Self.FActiveFileNameExt;
-end;
-
-procedure TRZANCustomPageControl.SetActiveFileNameExt (const AValue: string);
-begin
-  Self.FActiveFileNameExt := AValue;
-  if Self.ActiveFileNameExt = '.java' then
+  Self.RZGetRZEditor(Self.Pages[Self.PageIndex]);
+  if Trim(Self.FRZEditor.RZFileName) = '' then
   begin
-    Self.ActiveLanguage := rz_an_type_lang_Java;
-    Self.OpenDialog.FilterIndex := rz_an_var_FileFilterIndex_Java;
-    Self.SaveDialog.FilterIndex := rz_an_var_FileFilterIndex_Java;
-  end
-  else if Self.ActiveFileNameExt = '.pas' then
-  begin
-    Self.ActiveLanguage := rz_an_type_lang_Pascal;
-    Self.OpenDialog.FilterIndex := rz_an_var_FileFilterIndex_Pascal;
-    Self.SaveDialog.FilterIndex := rz_an_var_FileFilterIndex_Pascal;
-  end
-  else if Self.ActiveFileNameExt = '.py' then
-  begin
-    Self.ActiveLanguage := rz_an_type_lang_Python;
-    Self.OpenDialog.FilterIndex := rz_an_var_FileFilterIndex_Python;
-    Self.SaveDialog.FilterIndex := rz_an_var_FileFilterIndex_Python;
+    Self.RZSaveAsFile
   end
   else
   begin
-    Self.ActiveLanguage := rz_an_type_lang_Text;
-    Self.OpenDialog.FilterIndex := rz_an_var_FileFilterIndex_Text;
-    Self.SaveDialog.FilterIndex := rz_an_var_FileFilterIndex_Text;
+    Self.RZGetRZEditor(Self.Pages[Self.PageIndex]);
+    Self.FRZEditor.RZSave(Self.FRZEditor.RZFileName);
+    Self.RZANStatusBar.RZStatus := rz_an_type_status_Saved;
   end;
 end;
 
-{Properties - Misc}
-
-function TRZANCustomPageControl.GetPageIndex : Byte;
+procedure TRZANCustomPageControl.RZSaveAsFile;
+var
+  LFileName : TFileName;
 begin
-  Result := Self.FPageIndex;
+  Self.RZGetRZEditor(Self.Pages[Self.PageIndex]);
+  Self.RZANSaveDialog.FilterIndex := Ord(Self.FRZEditor.RZLanguage) + 1; // Filter Index begin at 1
+  if Self.RZANSaveDialog.Execute then
+  begin
+    LFileName := Self.RZANSaveDialog.FileName;
+    Self.RZGetRZEditor(Self.Pages[Self.PageIndex]);
+    Self.RZEditor.RZSave(LFileName);
+    Self.Pages[Self.PageIndex].Caption := ExtractFileName(LFileName);
+  end;
 end;
 
-procedure TRZANCustomPageControl.SetPageIndex (const AValue: Byte);
+{Text Editing}
+
+procedure TRZANCustomPageControl.SetRZDoParsing (AValue : Boolean);
 begin
-  Self.FPageIndex := AValue;
+  Self.FRZDoParsing := AValue;
+  Self.RZGetRZEditor(Self.Pages[Self.PageIndex]);
+  Self.RZEditor.RZDoParsing := Self.RZDoParsing;
 end;
 
-function TRZANCustomPageControl.GetDoParsing : Boolean;
+procedure TRZANCustomPageControl.RZTextEditing (AType : string);
 begin
-  Result := Self.FDoParsing;
+  Self.RZDoParsing := False;
+  Self.RZGetRZEditor(Self.Pages[Self.PageIndex]);
+  if AType = 'UNDO' then Self.RZEditor.RZUndo
+  else if AType = 'REDO' then Self.RZEditor.RZRedo
+  else if AType = 'COPY' then Self.RZEditor.RZCopy
+  else if AType = 'CUT' then Self.RZEditor.RZCut
+  else if AType = 'PASTE' then Self.RZEditor.RZPaste
+  else if AType = 'SELECTALL' then Self.RZEditor.RZSelectAll;
+  ;
 end;
 
-procedure TRZANCustomPageControl.SetDoParsing (const AValue: Boolean);
+procedure TRZANCustomPageControl.RZUndo;
 begin
-  Self.FDoParsing := AValue;
-  Self.TabSheet[Self.TabIndex].DoParsing := Self.DoParsing;
+  Self.RZTextEditing('UNDO');
 end;
 
-procedure TRZANCustomPageControl.Undo;
+procedure TRZANCustomPageControl.RZRedo;
 begin
-  Self.DoParsing := False;
-  Self.TabSheet[Self.TabIndex].Undo;
+  Self.RZTextEditing('REDO');
 end;
 
-procedure TRZANCustomPageControl.Redo;
+procedure TRZANCustomPageControl.RZCopy;
 begin
-  Self.DoParsing := False;
-  Self.TabSheet[Self.TabIndex].Redo;
+  Self.RZTextEditing('COPY');
 end;
 
-procedure TRZANCustomPageControl.Copy;
+procedure TRZANCustomPageControl.RZCut;
 begin
-  Self.DoParsing := False;
-  Self.TabSheet[Self.TabIndex].Copy;
+  Self.RZTextEditing('CUT');
 end;
 
-procedure TRZANCustomPageControl.Cut;
+procedure TRZANCustomPageControl.RZPaste;
 begin
-  Self.DoParsing := False;
-  Self.TabSheet[Self.TabIndex].Cut;
+  Self.RZTextEditing('PASTE');
 end;
 
-procedure TRZANCustomPageControl.Paste;
+procedure TRZANCustomPageControl.RZSelectAll;
 begin
-  Self.DoParsing := False;
-  Self.TabSheet[Self.TabIndex].Paste;
+  Self.RZTextEditing('SELECTALL');
 end;
 
-procedure TRZANCustomPageControl.SelectAll;
+{Language}
+
+procedure TRZANCustomPageControl.RZSetNewLanguage (ALanguage : rz_an_type_Language);
 begin
-  Self.DoParsing := False;
-  Self.TabSheet[Self.TabIndex].SelectAll;
+  Self.RZDoParsing := True;
+  Self.RZGetRZEditor(Self.Pages[Self.PageIndex]);
+  Self.RZEditor.RZLanguage := ALanguage;
+end;
+
+{Style}
+
+procedure TRZANCustomPageControl.RZSetNewStyle (AStyle : rz_an_type_Style);
+begin
+  Self.RZDoParsing := True;
+  Self.RZGetRZEditor(Self.Pages[Self.PageIndex]);
+  Self.RZEditor.RZStyle := AStyle;
 end;
 
 {Events}
 
 procedure TRZANCustomPageControl.Change;
 begin
-  Self.ActiveStatus := Self.TabSheet[Self.TabIndex].Status;
-  Self.ActiveLanguage := Self.TabSheet[Self.TabIndex].Language;
-  Self.ActiveCaretPosX := Self.TabSheet[Self.TabIndex].CaretPosX;
-  Self.ActiveCaretPosY := Self.TabSheet[Self.TabIndex].CaretPosY;
-  Self.ActiveFileName := Self.TabSheet[Self.TabIndex].FileName;
-  Self.DoParsing := False;
+  Self.RZGetRZEditor(Self.Pages[Self.PageIndex]);
+  Self.RZANStatusBar.RZStatus := Self.RZEditor.RZStatus;
+  Self.RZANStatusBar.RZLanguage := Self.RZEditor.RZLanguage;
+  Self.RZANStatusBar.RZCaretPosX := Self.RZEditor.RZCaretPosX;
+  Self.RZANStatusBar.RZCaretPosY := Self.RZEditor.RZCaretPosY;
+  Self.RZANStatusBar.RZFileName := Self.RZEditor.RZFileName;
+  Self.RZDoParsing := False;
   inherited;
 end;
 

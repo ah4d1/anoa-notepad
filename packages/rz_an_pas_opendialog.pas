@@ -1,4 +1,4 @@
-// This file is part of Anoa Notepad project
+// This file is part of Anoa-Notepad project
 // Copyright (C)2019 Ahadi Aprianto <ahadi.aprianto@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -11,8 +11,8 @@
 // misunderstandings, we consider an application to constitute a
 // "derivative work" for the purpose of this license if it does any of the
 // following:
-// 1. Integrates source code from Anoa Notepad.
-// 2. Integrates/includes/aggregates Anoa Notepad into a proprietary executable
+// 1. Integrates source code from Anoa-Notepad.
+// 2. Integrates/includes/aggregates Anoa-Notepad into a proprietary executable
 //    installer, such as those produced by InstallShield.
 // 3. Links to a library or executes a program that does any of the above.
 //
@@ -38,7 +38,7 @@ type
   TRZANOpenDialog = class(TOpenDialog)
   public
     constructor Create (AOwner : TComponent); override;
-    function Execute : Boolean;
+    function Execute : Boolean; override;
   end;
 
 implementation
@@ -48,14 +48,14 @@ implementation
 constructor TRZANOpenDialog.Create (AOwner : TComponent);
 begin
   inherited Create(AOwner);
+  // see rz_an_type_Language type
   Self.Filter := ''
-    + 'All Files (*.*)|*.*'
-    + '|Java Files (*.java)|*.java'
+    + 'Java Files (*.java)|*.java'
     + '|Pascal Files (*.pas)|*.pas'
     + '|Python Files (*.py)|*.py'
     + '|Text Files (*.txt)|*.txt'
+    + '|All Files (*.*)|*.*'
   ;
-  Self.FilterIndex := rz_an_var_FileFilterIndex_Default;
 end;
 
 function TRZANOpenDialog.Execute : Boolean;

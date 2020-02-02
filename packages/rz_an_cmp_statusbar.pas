@@ -1,4 +1,4 @@
-// This file is part of Anoa Notepad project
+// This file is part of Anoa-Notepad project
 // Copyright (C)2019 Ahadi Aprianto <ahadi.aprianto@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -11,8 +11,8 @@
 // misunderstandings, we consider an application to constitute a
 // "derivative work" for the purpose of this license if it does any of the
 // following:
-// 1. Integrates source code from Anoa Notepad.
-// 2. Integrates/includes/aggregates Anoa Notepad into a proprietary executable
+// 1. Integrates source code from Anoa-Notepad.
+// 2. Integrates/includes/aggregates Anoa-Notepad into a proprietary executable
 //    installer, such as those produced by InstallShield.
 // 3. Links to a library or executes a program that does any of the above.
 //
@@ -38,57 +38,54 @@ type
 
   TRZANStatusBarIndex = class(TComponent)
   private
-    FStatus : Byte;
-    FLanguage : Byte;
-    FCaret : Byte;
-    FFileName : Byte;
+    FRZStatus : Byte;
+    FRZLanguage : Byte;
+    FRZCaret : Byte;
+    FRZFileName : Byte;
   public
-    property Status : Byte read FStatus write FStatus;
-    property Language : Byte read FLanguage write FLanguage;
-    property Caret : Byte read FCaret write FCaret;
-    property FileName : Byte read FFileName write FFileName;
+    property RZStatus : Byte read FRZStatus write FRZStatus;
+    property RZLanguage : Byte read FRZLanguage write FRZLanguage;
+    property RZCaret : Byte read FRZCaret write FRZCaret;
+    property RZFileName : Byte read FRZFileName write FRZFileName;
     constructor Create (AOwner : TComponent); override;
   end;
 
   TRZANCustomStatusBar = class(TStatusBar)
   private
-    FCaretPosX : Integer;
-    FCaretPosY : Integer;
-    FFileName : TFileName;
-    FIndex : TRZANStatusBarIndex;
-    FLanguage : rz_an_type_Language;
-    FStatus : rz_an_type_Status;
-    procedure _PanelAdd(AAlignment : TAlignment; AText : TCaption; AWidth : Integer);
-    procedure _PanelsAdd;
+    FRZIndex : TRZANStatusBarIndex;
+    FRZStatus : rz_an_type_Status;
+    FRZLanguage : rz_an_type_Language;
+    FRZCaretPosX : Integer;
+    FRZCaretPosY : Integer;
+    FRZFileName : TFileName;
+    procedure FRZPanelAdd (AAlignment : TAlignment; AText : TCaption; AWidth : Integer);
+    procedure FRZPanelsAdd;
   protected
-    function GetCaretPosX : Integer;
-    procedure SetCaretPosX (const AValue: Integer);
-    function GetCaretPosY : Integer;
-    procedure SetCaretPosY (const AValue: Integer);
-    function GetFileName : TFileName;
-    procedure SetFileName (const AValue: TFileName);
-    function GetLanguage : rz_an_type_Language;
-    procedure SetLanguage (const AValue: rz_an_type_Language);
-    function GetStatus : rz_an_type_Status;
-    procedure SetStatus (const AValue: rz_an_type_Status);
-    property CaretPosX : Integer read GetCaretPosX write SetCaretPosX;
-    property CaretPosY : Integer read GetCaretPosY write SetCaretPosY;
-    property FileName : TFileName read GetFileName write SetFileName;
-    property Index : TRZANStatusBarIndex read FIndex write FIndex;
-    property Language : rz_an_type_Language read GetLanguage write SetLanguage;
-    property Status : rz_an_type_Status read GetStatus write SetStatus;
+    {Events of Properties}
+    procedure SetRZStatus (const AValue: rz_an_type_Status);
+    procedure SetRZLanguage (const AValue: rz_an_type_Language);
+    procedure SetRZCaretPosX (const AValue: Integer);
+    procedure SetRZCaretPosY (const AValue: Integer);
+    procedure SetRZFileName (const AValue: TFileName);
+    {Properties}
+    property RZIndex : TRZANStatusBarIndex read FRZIndex write FRZIndex;
+    property RZStatus : rz_an_type_Status read FRZStatus write SetRZStatus;
+    property RZLanguage : rz_an_type_Language read FRZLanguage write SetRZLanguage;
+    property RZCaretPosX : Integer read FRZCaretPosX write SetRZCaretPosX;
+    property RZCaretPosY : Integer read FRZCaretPosY write SetRZCaretPosY;
+    property RZFileName : TFileName read FRZFileName write SetRZFileName;
   public
     constructor Create (AOwner : TComponent); override;
   end;
 
   TRZANStatusBar = class(TRZANCustomStatusBar)
   public
-    property CaretPosX;
-    property CaretPosY;
-    property FileName;
-    property Index;
-    property Language;
-    property Status;
+    property RZIndex;
+    property RZStatus;
+    property RZLanguage;
+    property RZCaretPosX;
+    property RZCaretPosY;
+    property RZFileName;
   end;
 
 implementation
@@ -98,10 +95,10 @@ implementation
 constructor TRZANStatusBarIndex.Create (AOwner : TComponent);
 begin
   inherited Create(AOwner);
-  Self.Status := 0;
-  Self.Language := 1;
-  Self.Caret := 2;
-  Self.FileName := 3;
+  Self.RZStatus := 0;
+  Self.RZLanguage := 1;
+  Self.RZCaret := 2;
+  Self.RZFileName := 3;
 end;
 
 {Status Bar}
@@ -109,11 +106,11 @@ end;
 constructor TRZANCustomStatusBar.Create (AOwner : TComponent);
 begin
   inherited Create(AOwner);
-  Self._PanelsAdd;
-  Self.Index := TRZANStatusBarIndex.Create(Self);
+  Self.FRZPanelsAdd;
+  Self.RZIndex := TRZANStatusBarIndex.Create(Self);
 end;
 
-procedure TRZANCustomStatusBar._PanelAdd(AAlignment : TAlignment; AText : TCaption; AWidth : Integer);
+procedure TRZANCustomStatusBar.FRZPanelAdd (AAlignment : TAlignment; AText : TCaption; AWidth : Integer);
 begin
   with Self.Panels.Add do
   begin
@@ -123,74 +120,53 @@ begin
   end;
 end;
 
-procedure TRZANCustomStatusBar._PanelsAdd;
+procedure TRZANCustomStatusBar.FRZPanelsAdd;
 begin
-  Self._PanelAdd(taCenter,'Ready',100);
-  Self._PanelAdd(taCenter,'Text',100);
-  Self._PanelAdd(taCenter,'1:0',150);
-  Self._PanelAdd(taLeftJustify,'',50);
+  Self.FRZPanelAdd(taCenter,'Ready',100);
+  Self.FRZPanelAdd(taCenter,'Text',100);
+  Self.FRZPanelAdd(taCenter,'1:0',150);
+  Self.FRZPanelAdd(taLeftJustify,'',50);
 end;
 
-function TRZANCustomStatusBar.GetStatus : rz_an_type_Status;
+procedure TRZANCustomStatusBar.SetRZStatus (const AValue : rz_an_type_Status);
 begin
-  Result := Self.FStatus;
-end;
-
-procedure TRZANCustomStatusBar.SetStatus (const AValue : rz_an_type_Status);
-begin
-  Self.FStatus := AValue;
-  if Self.Status = rz_an_type_status_Ready then Self.Panels[Self.Index.Status].Text := 'Ready'
-    else if Self.Status = rz_an_type_status_Modified then Self.Panels[Self.Index.Status].Text := 'Modified'
-    else if Self.Status = rz_an_type_status_Saved then Self.Panels[Self.Index.Status].Text := 'Saved'
+  Self.FRZStatus := AValue;
+  if Self.RZStatus = rz_an_type_status_Ready then Self.Panels[Self.RZIndex.RZStatus].Text := 'Ready'
+    else if Self.RZStatus = rz_an_type_status_Modified then Self.Panels[Self.RZIndex.RZStatus].Text := 'Modified'
+    else if Self.RZStatus = rz_an_type_status_Saved then Self.Panels[Self.RZIndex.RZStatus].Text := 'Saved'
   ;
 end;
 
-function TRZANCustomStatusBar.GetLanguage : rz_an_type_Language;
+procedure TRZANCustomStatusBar.SetRZLanguage (const AValue : rz_an_type_Language);
 begin
-  Result := Self.FLanguage;
-end;
-
-procedure TRZANCustomStatusBar.SetLanguage (const AValue : rz_an_type_Language);
-begin
-  Self.FLanguage := AValue;
-  if Self.Language = rz_an_type_lang_Java then Self.Panels[Self.Index.Language].Text := 'Java'
-    else if Self.Language = rz_an_type_lang_Pascal then Self.Panels[Self.Index.Language].Text := 'Pascal'
-    else if Self.Language = rz_an_type_lang_Python then Self.Panels[Self.Index.Language].Text := 'Python'
-    else if Self.Language = rz_an_type_lang_Text then Self.Panels[Self.Index.Language].Text := 'Text'
+  Self.FRZLanguage := AValue;
+  if Self.RZLanguage = rz_an_type_lang_Java then Self.Panels[Self.RZIndex.RZLanguage].Text := 'Java'
+    else if Self.RZLanguage = rz_an_type_lang_Pascal then Self.Panels[Self.RZIndex.RZLanguage].Text := 'Pascal'
+    else if Self.RZLanguage = rz_an_type_lang_Python then Self.Panels[Self.RZIndex.RZLanguage].Text := 'Python'
+    else if Self.RZLanguage = rz_an_type_lang_Text then Self.Panels[Self.RZIndex.RZLanguage].Text := 'Text'
   ;
 end;
 
-function TRZANCustomStatusBar.GetCaretPosX : Integer;
+procedure TRZANCustomStatusBar.SetRZCaretPosX (const AValue : Integer);
 begin
-  Result := Self.FCaretPosX;
+  Self.FRZCaretPosX := AValue;
+  Self.Panels[Self.RZIndex.RZCaret].Text := IntToStr(Self.RZCaretPosY + 1) + ':'
+    + IntToStr(Self.RZCaretPosX)
+  ;
 end;
 
-procedure TRZANCustomStatusBar.SetCaretPosX (const AValue : Integer);
+procedure TRZANCustomStatusBar.SetRZCaretPosY (const AValue : Integer);
 begin
-  Self.FCaretPosX := AValue;
-  Self.Panels[Self.Index.Caret].Text := IntToStr(Self.CaretPosY + 1) + ':' + IntToStr(Self.CaretPosX);
+  Self.FRZCaretPosY := AValue;
+  Self.Panels[Self.RZIndex.RZCaret].Text := IntToStr(Self.RZCaretPosY + 1) + ':'
+    + IntToStr(Self.RZCaretPosX)
+  ;
 end;
 
-function TRZANCustomStatusBar.GetCaretPosY : Integer;
+procedure TRZANCustomStatusBar.SetRZFileName (const AValue : TFileName);
 begin
-  Result := Self.FCaretPosY;
-end;
-
-procedure TRZANCustomStatusBar.SetCaretPosY (const AValue : Integer);
-begin
-  Self.FCaretPosY := AValue;
-  Self.Panels[Self.Index.Caret].Text := IntToStr(Self.CaretPosY + 1) + ':' + IntToStr(Self.CaretPosX);
-end;
-
-function TRZANCustomStatusBar.GetFileName : TFileName;
-begin
-  Result := Self.FFileName;
-end;
-
-procedure TRZANCustomStatusBar.SetFileName (const AValue : TFileName);
-begin
-  Self.FFileName := AValue;
-  Self.Panels[Self.Index.FileName].Text := Self.FileName;
+  Self.FRZFileName := AValue;
+  Self.Panels[Self.RZIndex.RZFileName].Text := Self.RZFileName;
 end;
 
 end.

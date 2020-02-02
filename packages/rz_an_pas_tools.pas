@@ -1,4 +1,4 @@
-// This file is part of Anoa Notepad project
+// This file is part of Anoa-Notepad project
 // Copyright (C)2019 Ahadi Aprianto <ahadi.aprianto@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -11,8 +11,8 @@
 // misunderstandings, we consider an application to constitute a
 // "derivative work" for the purpose of this license if it does any of the
 // following:
-// 1. Integrates source code from Anoa Notepad.
-// 2. Integrates/includes/aggregates Anoa Notepad into a proprietary executable
+// 1. Integrates source code from Anoa-Notepad.
+// 2. Integrates/includes/aggregates Anoa-Notepad into a proprietary executable
 //    installer, such as those produced by InstallShield.
 // 3. Links to a library or executes a program that does any of the above.
 //
@@ -37,7 +37,8 @@ uses
 type
   TRZANTools = object
   public
-    function StringExplode (AString : string; ADelimiter : Char) : TStrings;
+    function RZCountOccurences (const ASubStr: string; const AStr: string): Integer;
+    function RZStringExplode (AString : string; ADelimiter : Char) : TStrings;
   end;
 
 var
@@ -45,13 +46,20 @@ var
 
 implementation
 
-function TRZANTools.StringExplode (AString : string; ADelimiter : Char) : TStrings;
+function TRZANTools.RZCountOccurences (const ASubStr: string; const AStr: string): Integer;
+begin
+  Result := Pos(ASubStr,AStr);
+  if Result > 0 then
+    Result := (Length(AStr) - Length(StringReplace(AStr,ASubStr,'',[rfReplaceAll]))) div Length(ASubStr);
+end;
+
+function TRZANTools.RZStringExplode (AString : string; ADelimiter : Char) : TStrings;
 var
   LStrings : TStringList;
 begin
   LStrings := TStringList.Create;
-  LStrings.StrictDelimiter := True; // hanya menggunakan spasi yang ditentukan, jika FALSE maka spasi akan diperhitungkan sebagai delimiter
-  LStrings.Delimiter := ADelimiter; // set char sebagai delimiter
+  LStrings.StrictDelimiter := True; // only use specific delimiter, if FALSE, character space will be used as delimiter
+  LStrings.Delimiter := ADelimiter; // set char as delimiter
   LStrings.DelimitedText := AString;
   Result := LStrings
 end;

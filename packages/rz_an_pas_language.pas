@@ -1,4 +1,4 @@
-// This file is part of Anoa Notepad project
+// This file is part of Anoa-Notepad project
 // Copyright (C)2019 Ahadi Aprianto <ahadi.aprianto@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -11,8 +11,8 @@
 // misunderstandings, we consider an application to constitute a
 // "derivative work" for the purpose of this license if it does any of the
 // following:
-// 1. Integrates source code from Anoa Notepad.
-// 2. Integrates/includes/aggregates Anoa Notepad into a proprietary executable
+// 1. Integrates source code from Anoa-Notepad.
+// 2. Integrates/includes/aggregates Anoa-Notepad into a proprietary executable
 //    installer, such as those produced by InstallShield.
 // 3. Links to a library or executes a program that does any of the above.
 //
@@ -32,171 +32,120 @@ unit rz_an_pas_language;
 interface
 
 uses
-  Classes, SysUtils, Graphics, Dialogs, RichMemo, rz_an_pas_reserved_word;
+  Classes, SysUtils, Graphics, Dialogs, RichMemo, rz_an_pas_reserved_word, rz_an_pas_tools;
 
 type
   TRZANLanguage = class(TComponent)
+  private
+    function FRZDelimiterPos (AText : WideString) : TStringList;
   public
-    procedure AllParsing (AMemo : TRichMemo; AReservedWord : TStrings);
-    procedure LineParsing (AMemo : TRichMemo; AReservedWord : TStrings);
-    procedure Reset (AMemo : TRichMemo);
+    procedure RZReset (AMemo : TRichMemo);
+    procedure RZLineParsing (AMemo : TRichMemo; AReservedWord : TStrings;
+      ALineText : WideString; AAbsolutePos : LongInt);
+    procedure RZAllParsing (AMemo : TRichMemo; AReservedWord : TStrings);
   end;
 
 implementation
 
-procedure TRZANLanguage.AllParsing (AMemo : TRichMemo; AReservedWord : TStrings);
+function TRZANLanguage.FRZDelimiterPos (AText : WideString) : TStringList;
 var
-  i : LongInt;
-  //
-  LPosDelimiter : LongInt;
-  LWord : string;
-  LWordRest : string;
-  //
-  j : Word;
-  LReservedWord : string;
-  LFont : TFont;
-  LAbsolutePos : LongInt;
+  LText : WideString;
+  i : Integer;
+  LPosArr : TStringList;
 begin
-  if AMemo.Lines.Count <= 0 then Exit;
-  if AReservedWord.Count <= 0 then Exit;
+  LText := AText;
+  LText := StringReplace(LText,';',' ',[rfReplaceAll]);
+  LText := StringReplace(LText,'.',' ',[rfReplaceAll]);
+  LText := StringReplace(LText,Chr(9),' ',[rfReplaceAll]); // tab
+  LText := StringReplace(LText,Chr(10),' ',[rfReplaceAll]); // line feed
+  LText := StringReplace(LText,Chr(13),' ',[rfReplaceAll]); // carriage return
+  LText := StringReplace(LText,#13#10,' ',[rfReplaceAll]);
+  LPosArr := TStringList.Create;
+  LPosArr.Add(IntToStr(0));
+  for i := 1 to Length(LText) do
+  begin
+    if LText[i] = ' ' then LPosArr.Add(IntToStr(i));
+  end;
+  LPosArr.Add(IntToStr(Length(LText)+1));
+  Result := LPosArr;
+end;
 
-  Self.Reset(AMemo);
-
+procedure TRZANLanguage.RZReset (AMemo : TRichMemo);
+var
+  LFont : TFont;
+begin
   LFont := TFont.Create;
   LFont.Name := AMemo.Font.Name;
   LFont.Quality := AMemo.Font.Quality;
   LFont.Size := AMemo.Font.Size;
-  LFont.Color := AMemo.Font.Color;
-
   LFont.Style := [];
   AMemo.SelectAll;
   AMemo.SetTextAttributes(AMemo.SelStart,AMemo.SelLength,LFont);
   AMemo.SelStart := 0;
-
-  if AReservedWord.Count < 1 then Exit;
-
-  LAbsolutePos := 0;
-  AMemo.Font.Style := [];
-  for i := 0 to AMemo.Lines.Count - 1 do
-  begin
-    LWord := '';
-    LWordRest := AMemo.Lines[i];
-    repeat
-      LPosDelimiter := Pos(' ',LWordRest);
-      if LPosDelimiter > 0 then
-      begin
-        LWord := Copy(LWordRest,0,LPosDelimiter-1);
-        LWordRest := Copy(LWordRest,LPosDelimiter+1,Length(LWordRest));
-        LAbsolutePos := LAbsolutePos + Length(LWord);
-        for j := 0 to AReservedWord.Count - 1 do
-        begin
-          LReservedWord := AReservedWord.Strings[j];
-          if (LWord = LReservedWord) then
-          begin
-            LFont.Style := [fsBold];
-            AMemo.SetTextAttributes(LAbsolutePos-Length(LWord),Length(LWord),LFont);
-          end;
-        end;
-        LAbsolutePos := LAbsolutePos + 1; // new word
-      end
-      else
-      begin
-        LWord := LWordRest;
-        LWordRest := '';
-        LAbsolutePos := LAbsolutePos + Length(LWord);
-        for j := 0 to AReservedWord.Count - 1 do
-        begin
-          LReservedWord := AReservedWord.Strings[j];
-          if (LWord = LReservedWord) then
-          begin
-            LFont.Style := [fsBold];
-            AMemo.SetTextAttributes(LAbsolutePos-Length(LWord),Length(LWord),LFont);
-          end;
-        end;
-      end;
-    until Trim(LWordRest) = '';
-    LAbsolutePos := LAbsolutePos + 1; // new line
-  end;
   LFont.Free;
 end;
 
-procedure TRZANLanguage.LineParsing (AMemo : TRichMemo; AReservedWord : TStrings);
+procedure TRZANLanguage.RZLineParsing (AMemo : TRichMemo; AReservedWord : TStrings;
+  ALineText : WideString; AAbsolutePos : LongInt);
 var
-  i : LongInt;
-  //
-  LPosDelimiter : LongInt;
-  LWord : string;
-  LWordRest : string;
-  //
-  j : Word;
-  LReservedWord : string;
-  LFont : TFont;
   LAbsolutePos : LongInt;
+  LFont : TFont;
+  LLineText : WideString;
+  LDelimiterPos : TStringList;
+  i,j : Integer;
+  LWord : string;
+  LReservedWord : string;
 begin
-  if AMemo.Lines.Count <= 0 then Exit;
-  if AReservedWord.Count <= 0 then Exit;
-
+  LAbsolutePos := AAbsolutePos;
+  LLineText := ALineText;
+  {Initial Font Setup}
   LFont := TFont.Create;
   LFont.Name := AMemo.Font.Name;
   LFont.Quality := AMemo.Font.Quality;
   LFont.Size := AMemo.Font.Size;
   LFont.Color := AMemo.Font.Color;
-
-  LAbsolutePos := AMemo.SelStart - AMemo.CaretPos.X;
-  LFont.Style := [];
-  AMemo.SetTextAttributes(LAbsolutePos,Length(AMemo.Lines[AMemo.CaretPos.Y]),LFont);
-
-  LWord := '';
-  LWordRest := AMemo.Lines[AMemo.CaretPos.Y];
-  repeat
-    LPosDelimiter := Pos(' ',LWordRest);
-    if LPosDelimiter > 0 then
+  {Initial Text Attributes}
+  AMemo.SetTextAttributes(LAbsolutePos,Length(LLineText),LFont);
+  {Parsing}
+  LDelimiterPos := Self.FRZDelimiterPos(LLineText);
+  for i := 1 to LDelimiterPos.Count-1 do
+  begin
+    LWord := Copy(LLineText,StrToInt(LDelimiterPos[i-1])+1,
+      StrToInt(LDelimiterPos[i])-StrToInt(LDelimiterPos[i-1])-1)
+    ;
+    for j := 0 to AReservedWord.Count - 1 do
     begin
-      LWord := Copy(LWordRest,0,LPosDelimiter-1);
-      LWordRest := Copy(LWordRest,LPosDelimiter+1,Length(LWordRest));
-      LAbsolutePos := LAbsolutePos + Length(LWord);
-      for j := 0 to AReservedWord.Count - 1 do
+      LReservedWord := AReservedWord.Strings[j];
+      if (LWord = LReservedWord) then
       begin
-        LReservedWord := AReservedWord.Strings[j];
-        if (LWord = LReservedWord) then
-        begin
-          LFont.Style := [fsBold];
-          AMemo.SetTextAttributes(LAbsolutePos-Length(LWord),Length(LWord),LFont);
-        end;
-      end;
-      LAbsolutePos := LAbsolutePos + 1; // new word
-    end
-    else
-    begin
-      LWord := LWordRest;
-      LWordRest := '';
-      LAbsolutePos := LAbsolutePos + Length(LWord);
-      for j := 0 to AReservedWord.Count - 1 do
-      begin
-        LReservedWord := AReservedWord.Strings[j];
-        if (LWord = LReservedWord) then
-        begin
-          LFont.Style := [fsBold];
-          AMemo.SetTextAttributes(LAbsolutePos-Length(LWord),Length(LWord),LFont);
-        end;
+        LFont.Style := [fsBold];
+        AMemo.SetTextAttributes(LAbsolutePos,Length(LWord),LFont);
       end;
     end;
-  until Trim(LWordRest) = '';
+    LAbsolutePos := LAbsolutePos + Length(LWord) + 1; // + 1 for delimiter
+  end;
+  {Free Memory}
   LFont.Free;
 end;
 
-procedure TRZANLanguage.Reset (AMemo : TRichMemo);
+procedure TRZANLanguage.RZAllParsing (AMemo : TRichMemo; AReservedWord : TStrings);
 var
-  LFont : TFont;
+  i : LongInt;
+  LLineText : WideString;
+  LAbsolutePos : LongInt;
 begin
-  LFont := TFont.Create;
-  LFont.Name := AMemo.Font.Name;
-  LFont.Quality := AMemo.Font.Quality;
-  LFont.Size := AMemo.Font.Size;
-  LFont.Style := [];
-  AMemo.SelectAll;
-  AMemo.SetTextAttributes(AMemo.SelStart,AMemo.SelLength,LFont);
-  AMemo.SelStart := 0;
+  if AMemo.Lines.Count <= 0 then Exit;
+  if AReservedWord.Count <= 0 then Exit;
+  Self.RZReset(AMemo);
+  LAbsolutePos := 0;
+  for i := 0 to AMemo.Lines.Count-1 do
+  begin
+    AMemo.CaretPos := Point(0,i);
+    LLineText := AMemo.Lines[i];
+    LAbsolutePos := AMemo.SelStart;
+    Self.RZLineParsing(AMemo,AReservedWord,LLineText,LAbsolutePos);
+  end;
+  AMemo.CaretPos := Point(0,0);
 end;
 
 end.

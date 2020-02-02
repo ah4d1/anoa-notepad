@@ -32,123 +32,199 @@ unit rz_an_cmp_richmemo;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, ComCtrls, Dialogs, StdCtrls, RichMemo,
-  LCLType, Messages, Clipbrd, rz_an_pas_var, rz_an_pas_opendialog, rz_an_pas_savedialog, rz_an_cmp_statusbar,
-  rz_an_pas_reserved_word, rz_an_pas_language;
+  Classes, SysUtils, LResources, Forms, Grids, Controls, Graphics, Graph, ComCtrls, Dialogs, StdCtrls, RichMemo,
+  LCLType, LCLIntf, Messages, Clipbrd, rz_an_pas_var, rz_an_pas_opendialog,
+  rz_an_pas_savedialog, rz_an_cmp_statusbar, rz_an_pas_reserved_word, rz_an_pas_language,
+  rz_an_cmp_linenumber;
 
 type
+
+  TRZScrollEvent = procedure(Sender: TObject; Message: TMessage) of object;
   TRZANCustomRichMemo = class(TRichMemo)
   private
-    FStatus : rz_an_type_Status;
-    FLanguage : rz_an_type_Language;
-    FLanguageProc : TRZANLanguage;
-    FCaretPosX : Integer;
-    FCaretPosY : Integer;
-    FFileName : TFileName;
-    FFileNameOnly : string;
-    FFileNameExt : string;
-    FDoParsing : Boolean;
-    FReservedWord : TStrings;
-    FReservedWordDict : TRZANReservedWord;
-    FStatusBar : TRZANStatusBar;
-    FStyle : rz_an_type_Style;
-    FTabSheet : TTabSheet;
-    FClipboard : TClipboard;
+    {Properties}
+    FRZStatus : rz_an_type_Status;
+    FRZLanguage : rz_an_type_Language;
+    FRZCaretPosX : Integer;
+    FRZCaretPosY : Integer;
+    FRZFileName : TFileName;
+    FRZFileNameExt : string;
+    FRZDoParsing : Boolean;
+    FRZStyle : rz_an_type_Style;
+    FRZClipboard : TClipboard;
+    FOnScroll : TRZScrollEvent;
+    {Sub-Components}
+    FRZANLanguage : TRZANLanguage;
+    FRZReservedWords : TStrings;
+    FRZANReservedWord : TRZANReservedWord;
+    FRZANLineNumber : TRZANLineNumber;
+    FRZANStatusBar : TRZANStatusBar;
     procedure _SetTabSet;
-    procedure _SetStatusBarCaret;
-    procedure _SetStyle (AStyle : rz_an_type_Style);
   protected
     {Functions of Properties}
-    function GetStatus : rz_an_type_Status;
-    procedure SetStatus (const AValue: rz_an_type_Status);
-    function GetLanguage : rz_an_type_Language;
-    procedure SetLanguage (const AValue: rz_an_type_Language);
-    function GetCaretPosX : Integer;
-    procedure SetCaretPosX (const AValue: Integer);
-    function GetCaretPosY : Integer;
-    procedure SetCaretPosY (const AValue: Integer);
-    function GetFileName : TFileName;
-    procedure SetFileName (const AValue: TFileName);
-    function GetFileNameOnly : string;
-    procedure SetFileNameOnly (const AValue: string);
-    function GetFileNameExt : string;
+    procedure SetRZStatus (const AValue: rz_an_type_Status);
+    procedure SetRZLanguage (const AValue: rz_an_type_Language);
+    procedure SetRZCaretPosX (const AValue: Integer);
+    procedure SetRZCaretPosY (const AValue: Integer);
+    procedure SetRZFileName (const AValue: TFileName);
     procedure SetFileNameExt (const AValue: string);
-    function GetStyle : rz_an_type_Style;
-    procedure SetStyle (const AValue: rz_an_type_Style);
-    function GetTabSheet : TTabSheet;
-    procedure SetTabSheet (const AValue: TTabSheet);
+    procedure SetRZStyle (const AValue: rz_an_type_Style);
     {Properties}
-    property Status : rz_an_type_Status read GetStatus write SetStatus;
-    property Language : rz_an_type_Language read GetLanguage write SetLanguage;
-    property LanguageProc : TRZANLanguage read FLanguageProc write FLanguageProc;
-    property CaretPosX : Integer read GetCaretPosX write SetCaretPosX;
-    property CaretPosY : Integer read GetCaretPosY write SetCaretPosY;
-    property FileName : TFileName read GetFileName write SetFileName;
-    property FileNameOnly : string read GetFileNameOnly write SetFileNameOnly;
-    property FileNameExt : string read GetFileNameExt write SetFileNameExt;
-    property DoParsing : Boolean read FDoParsing write FDoParsing;
-    property ReservedWord : TStrings read FReservedWord write FReservedWord;
-    property ReservedWordDict : TRZANReservedWord read FReservedWordDict write FReservedWordDict;
-    property StatusBar : TRZANStatusBar read FStatusBar write FStatusBar;
-    property Style : rz_an_type_Style read GetStyle write SetStyle;
-    property TabSheet : TTabSheet read GetTabSheet write SetTabSheet;
+    property RZStatus : rz_an_type_Status read FRZStatus write SetRZStatus;
+    property RZLanguage : rz_an_type_Language read FRZLanguage write SetRZLanguage;
+    property RZCaretPosX : Integer read FRZCaretPosX write SetRZCaretPosX;
+    property RZCaretPosY : Integer read FRZCaretPosY write SetRZCaretPosY;
+    property RZFileName : TFileName read FRZFileName write SetRZFileName;
+    property RZFileNameExt : string read FRZFileNameExt write SetFileNameExt;
+    property RZStyle : rz_an_type_Style read FRZStyle write SetRZStyle;
+    {***}
+    property RZDoParsing : Boolean read FRZDoParsing write FRZDoParsing;
+    property RZClipboard : TClipboard read FRZClipboard write FRZClipboard;
+    {Sub-Components}
+    property RZANLanguage : TRZANLanguage read FRZANLanguage write FRZANLanguage;
+    property RZReservedWords : TStrings read FRZReservedWords write FRZReservedWords;
+    property RZANReservedWord : TRZANReservedWord read FRZANReservedWord write FRZANReservedWord;
+    property RZANLineNumber : TRZANLineNumber read FRZANLineNumber write FRZANLineNumber;
+    property RZANStatusBar : TRZANStatusBar read FRZANStatusBar write FRZANStatusBar;
     {Events}
+    function RZFirstVisibleLine :Integer;
+    procedure RZInfoUpdate;
     procedure Change; override;
     procedure DoEnter; override;
-    procedure MouseDown (Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure KeyPress (var Key: char); override;
     procedure KeyDown (var Key: Word; Shift: TShiftState); override;
     procedure KeyUp (var Key: Word; Shift: TShiftState); override;
+    procedure MouseDown (Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseWheel (Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+    {Scroll}
+    procedure WndProc(var Message: TMessage); override;
   public
+    {Create}
     constructor Create (AOwner : TComponent); override;
-    procedure Open (AFileName : TFileName);
-    procedure Save (AFileName : TFileName);
-    procedure DoUndo;
-    procedure DoRedo;
-    procedure DoCopy;
-    procedure DoCut;
-    procedure DoPaste;
-    procedure DoSelectAll;
+    {Open and Save}
+    procedure RZOpen (AFileName : TFileName);
+    procedure RZSave (AFileName : TFileName);
+    {Text Editing}
+    procedure RZUndo;
+    procedure RZRedo;
+    procedure RZCopy;
+    procedure RZCut;
+    procedure RZPaste;
+    procedure RZSelectAll;
+    {Line Numbering}
+    procedure RZAllLineNumber;
+    {Scroll}
+    procedure DoScroll (Sender: TObject; AMessage: TMessage);
+    property OnScroll : TRZScrollEvent read FOnScroll write FOnScroll;
+    {Language}
+    procedure RZLanguageRefresh;
   end;
 
   TRZANRichMemo = class(TRZANCustomRichMemo)
   public
-    property CaretPosX;
-    property CaretPosY;
-    property FileName;
-    property FileNameOnly;
-    property FileNameExt;
-    property ReservedWord;
-    property DoParsing;
+    {Properties}
+    property RZCaretPosX;
+    property RZCaretPosY;
+    property RZFileName;
+    property RZFileNameExt;
+    property RZDoParsing;
+    {Sub-Components}
+    property RZReservedWords;
+    property RZANLineNumber;
   published
-    property Status;
-    property Language;
-    property StatusBar;
-    property Style;
-    property TabSheet;
+    property RZStatus;
+    property RZLanguage;
+    property RZStyle;
+    property RZANStatusBar;
   end;
 
 implementation
 
+{Create}
+
 constructor TRZANCustomRichMemo.Create (AOwner : TComponent);
 begin
   inherited Create(AOwner);
-  Self.LanguageProc := TRZANLanguage.Create(Self);
-  Self.ReservedWord := TStrings.Create;
-  Self.ReservedWordDict := TRZANReservedWord.Create(Self);
-  Self.StatusBar := TRZANStatusBar.Create(Self);
-  Self.DoParsing := True;
-  Self.Language := rz_an_type_lang_Text;
-  Self.Status := rz_an_type_status_Ready;
+  {Sub-Components}
+  Self.RZANLanguage := TRZANLanguage.Create(Self);
+  Self.RZReservedWords := TStrings.Create;
+  Self.RZANReservedWord := TRZANReservedWord.Create(Self);
+  Self.RZANLineNumber := TRZANLineNumber.Create(Self);
+  Self.RZANStatusBar := TRZANStatusBar.Create(Self);
+  Self.RZClipboard := TClipboard.Create;
+  {Properties}
+  Self.Color := clWhite;
+  Self.VertScrollBar.Smooth := False;
+  Self.RZStatus := rz_an_type_status_Ready;
+  Self.RZLanguage := rz_an_type_lang_Text;
+  Self.RZDoParsing := True;
   // Self.Style := rz_an_type_style_Normal; // ERROR
+  {Font Setting}
   Self.Font.Name := 'Courier New';
   Self.Font.Size := 10;
   Self.Font.Color := clBlack;
   Self.Font.Quality := fqDraft;
-  Self.Color := clWhite;
+  {Misc Settings}
   Self.ScrollBars := ssBoth;
-  Self._SetTabSet;
-  Self.FClipboard := TClipboard.Create;
+  // Self._SetTabSet;
+  {Scroll}
+  Self.OnScroll := @Self.DoScroll;
+end;
+
+{Open and Save}
+
+procedure TRZANCustomRichMemo.RZOpen (AFileName : TFileName);
+begin
+  Self.RZFileName := AFileName;
+  Self.Lines.LoadFromFile(Self.RZFileName);
+  Self.RZANLanguage.RZAllParsing(Self,Self.RZReservedWords);
+  Self.RZAllLineNumber;
+end;
+
+procedure TRZANCustomRichMemo.RZSave (AFileName : TFileName);
+begin
+  Self.RZFileName := AFileName;
+  Self.Lines.SaveToFile(Self.RZFileName);
+  Self.RZStatus := rz_an_type_status_Saved;
+end;
+
+{Text Editing}
+
+procedure TRZANCustomRichMemo.RZUndo;
+begin
+  Self.RZDoParsing := False;
+  Self.Undo;
+  Self.RZDoParsing := True;
+end;
+
+procedure TRZANCustomRichMemo.RZRedo;
+begin
+  Self.RZDoParsing := False;
+  Self.Redo;
+  Self.RZDoParsing := True;
+end;
+
+procedure TRZANCustomRichMemo.RZCopy;
+begin
+  Self.RZClipboard.Clear;
+  Self.RZClipboard.AsText := Self.SelText;
+end;
+
+procedure TRZANCustomRichMemo.RZCut;
+begin
+  Self.RZClipboard.AsText := Self.SelText;
+  Self.SelText := '';
+end;
+
+procedure TRZANCustomRichMemo.RZPaste;
+begin
+  Self.SelText := Self.RZClipboard.AsText;
+  Self.RZANLanguage.RZAllParsing(Self,Self.RZReservedWords);
+end;
+
+procedure TRZANCustomRichMemo.RZSelectAll;
+begin
+  Self.SelectAll;
 end;
 
 {Privates}
@@ -166,24 +242,74 @@ begin
   Self.SetParaTabs(1, 9999, LStopList);
 end;
 
-procedure TRZANCustomRichMemo._SetStatusBarCaret;
+{Status}
+
+procedure TRZANCustomRichMemo.SetRZStatus (const AValue: rz_an_type_Status);
 begin
-  Self.StatusBar.CaretPosX := Self.CaretPos.X;
-  Self.StatusBar.CaretPosY := Self.CaretPos.Y;
-  Self.CaretPosX := Self.CaretPos.X;
-  Self.CaretPosY := Self.CaretPos.Y;
+  Self.FRZStatus := AValue;
+  Self.RZANStatusBar.RZStatus := Self.RZStatus;
 end;
 
-procedure TRZANCustomRichMemo._SetStyle (AStyle : rz_an_type_Style);
+{Language}
+
+procedure TRZANCustomRichMemo.SetRZLanguage (const AValue: rz_an_type_Language);
+begin
+  Self.FRZLanguage := AValue;
+  if Self.RZLanguage = rz_an_type_lang_Java then Self.RZReservedWords := Self.RZANReservedWord.RZLangJava
+    else if Self.RZLanguage = rz_an_type_lang_Pascal then Self.RZReservedWords := Self.RZANReservedWord.RZLangPascal
+    else if Self.RZLanguage = rz_an_type_lang_Python then Self.RZReservedWords := Self.RZANReservedWord.RZLangPython
+    else Self.RZReservedWords := Self.RZANReservedWord.RZLangText
+  ;
+  if Self.RZDoParsing then Self.RZANLanguage.RZAllParsing(Self,Self.RZReservedWords);
+  Self.RZANStatusBar.RZLanguage := Self.RZLanguage;
+  Self.RZDoParsing := False;
+end;
+
+{Carets}
+
+procedure TRZANCustomRichMemo.SetRZCaretPosX (const AValue : Integer);
+begin
+  Self.FRZCaretPosX := AValue;
+  Self.RZANStatusBar.RZCaretPosX := Self.RZCaretPosX;
+end;
+
+procedure TRZANCustomRichMemo.SetRZCaretPosY (const AValue : Integer);
+begin
+  Self.FRZCaretPosY := AValue;
+  Self.RZANStatusBar.RZCaretPosY := Self.RZCaretPosY;
+end;
+
+{FileName}
+
+procedure TRZANCustomRichMemo.SetRZFileName (const AValue: TFileName);
+begin
+  Self.FRZFileName := AValue;
+  Self.RZFileNameExt := ExtractFileExt(Self.RZFileName);
+  Self.RZANStatusBar.RZFileName := Self.RZFileName;
+end;
+
+procedure TRZANCustomRichMemo.SetFileNameExt (const AValue: string);
+begin
+  Self.FRZFileNameExt := AValue;
+  if Self.RZFileNameExt = '.java' then Self.RZLanguage := rz_an_type_lang_Java
+  else if Self.RZFileNameExt = '.pas' then Self.RZLanguage := rz_an_type_lang_Pascal
+  else if Self.RZFileNameExt = '.py' then Self.RZLanguage := rz_an_type_lang_Python
+  else Self.RZLanguage := rz_an_type_lang_Text;
+end;
+
+{Style}
+
+procedure TRZANCustomRichMemo.SetRZStyle (const AValue: rz_an_type_Style);
 var
   LFont : TFont;
 begin
-  if (AStyle = rz_an_type_style_Normal) then
+  Self.FRZStyle := AValue;
+  if (AValue = rz_an_type_style_Normal) then
   begin
     Self.Color := rz_an_var_Style_Color_Normal;
     Self.Font.Color := rz_an_var_Style_FontColor_Normal;
   end
-  else if (AStyle = rz_an_type_style_Dark) then
+  else if (AValue = rz_an_type_style_Dark) then
   begin
     Self.Color := rz_an_var_Style_Color_Dark;
     Self.Font.Color := rz_an_var_Style_FontColor_Dark;
@@ -193,202 +319,83 @@ begin
   LFont.Color := Self.Font.Color;
   Self.SetTextAttributes(0,Self.SelLength,LFont);
   LFont.Free;
-  Self.Language := Self.Language;
+  Self.RZLanguage := Self.RZLanguage;
   Self.SelStart := 0;
+  Self.RZANLineNumber.TopRow := 0;
 end;
 
-{Editor Format}
+{Line Number}
 
-function TRZANCustomRichMemo.GetCaretPosX : Integer;
+procedure TRZANCustomRichMemo.RZAllLineNumber;
 begin
-  Result := Self.FCaretPosX;
-end;
-
-procedure TRZANCustomRichMemo.SetCaretPosX (const AValue : Integer);
-begin
-  Self.FCaretPosX := AValue;
-  Self.StatusBar.CaretPosX := Self.CaretPosX;
-end;
-
-function TRZANCustomRichMemo.GetCaretPosY : Integer;
-begin
-  Result := Self.FCaretPosY;
-end;
-
-procedure TRZANCustomRichMemo.SetCaretPosY (const AValue : Integer);
-begin
-  Self.FCaretPosY := AValue;
-  Self.StatusBar.CaretPosY := Self.CaretPosY;
-end;
-
-function TRZANCustomRichMemo.GetLanguage : rz_an_type_Language;
-begin
-  Result := Self.FLanguage;
-end;
-
-procedure TRZANCustomRichMemo.SetLanguage (const AValue: rz_an_type_Language);
-begin
-  Self.FLanguage := AValue;
-  if Self.Language = rz_an_type_lang_Java then Self.ReservedWord := Self.ReservedWordDict.LangJava
-    else if Self.Language = rz_an_type_lang_Pascal then Self.ReservedWord := Self.ReservedWordDict.LangPascal
-    else if Self.Language = rz_an_type_lang_Python then Self.ReservedWord := Self.ReservedWordDict.LangPython
-    else Self.ReservedWord := Self.ReservedWordDict.LangText
-  ;
-  if Self.DoParsing then Self.LanguageProc.AllParsing(Self,Self.ReservedWord);
-  Self.StatusBar.Language := Self.Language;
-  Self.DoParsing := False;
-end;
-
-{File Name}
-
-function TRZANCustomRichMemo.GetFileName : TFileName;
-begin
-  Result := Self.FFileName;
-end;
-
-procedure TRZANCustomRichMemo.SetFileName (const AValue: TFileName);
-begin
-  Self.FFileName := AValue;
-  Self.FileNameOnly := ExtractFileName(Self.FileName);
-  Self.FileNameExt := ExtractFileExt(Self.FileName);
-  Self.StatusBar.FileName := Self.FileName;
-end;
-
-function TRZANCustomRichMemo.GetFileNameOnly : string;
-begin
-  Result := Self.FFileNameOnly;
-end;
-
-procedure TRZANCustomRichMemo.SetFileNameOnly (const AValue: string);
-begin
-  Self.FFileNameOnly := AValue;
-end;
-
-function TRZANCustomRichMemo.GetFileNameExt : string;
-begin
-  Result := Self.FFileNameExt;
-end;
-
-procedure TRZANCustomRichMemo.SetFileNameExt (const AValue: string);
-begin
-  Self.FFileNameExt := AValue;
-  if Self.FileNameExt = '.java' then Self.Language := rz_an_type_lang_Java
-  else if Self.FileNameExt = '.pas' then Self.Language := rz_an_type_lang_Pascal
-  else if Self.FileNameExt = '.py' then Self.Language := rz_an_type_lang_Python
-  else Self.Language := rz_an_type_lang_Text;
-end;
-
-{Status}
-
-function TRZANCustomRichMemo.GetStatus : rz_an_type_Status;
-begin
-  Result := Self.FStatus;
-end;
-
-procedure TRZANCustomRichMemo.SetStatus (const AValue: rz_an_type_Status);
-begin
-  Self.FStatus := AValue;
-  Self.StatusBar.Status := Self.Status;
-end;
-
-{Style}
-
-function TRZANCustomRichMemo.GetStyle : rz_an_type_Style;
-begin
-  Result := Self.FStyle;
-end;
-
-procedure TRZANCustomRichMemo.SetStyle (const AValue: rz_an_type_Style);
-begin
-  Self.FStyle := AValue;
-  Self._SetStyle(AValue);
-end;
-
-{Tab Sheet}
-
-function TRZANCustomRichMemo.GetTabSheet : TTabSheet;
-begin
-  Result := Self.FTabSheet;
-end;
-
-procedure TRZANCustomRichMemo.SetTabSheet (const AValue: TTabSheet);
-begin
-  Self.FTabSheet := AValue;
-end;
-
-{Common Function}
-
-procedure TRZANCustomRichMemo.Open (AFileName : TFileName);
-begin
-  Self.FileName := AFileName;
-  Self.Lines.LoadFromFile(Self.FileName);
-  Self.LanguageProc.AllParsing(Self,Self.ReservedWord);
-  Self.StatusBar.FileName := Self.FileName;
-end;
-
-procedure TRZANCustomRichMemo.Save (AFileName : TFileName);
-begin
-  Self.FileName := AFileName;
-  Self.Lines.SaveToFile(Self.FileName);
-  Self.Status := rz_an_type_status_Saved;
-end;
-
-procedure TRZANCustomRichMemo.DoUndo;
-begin
-  Self.Undo;
-end;
-
-procedure TRZANCustomRichMemo.DoRedo;
-begin
-  Self.Redo;
-end;
-
-procedure TRZANCustomRichMemo.DoCopy;
-begin
-  Self.FClipboard.Clear;
-  Self.FClipboard.AsText := Self.SelText;
-end;
-
-procedure TRZANCustomRichMemo.DoCut;
-begin
-  Self.FClipboard.AsText := Self.SelText;
-  Self.SelText := '';
-end;
-
-procedure TRZANCustomRichMemo.DoPaste;
-begin
-  Self.SelText := Self.FClipboard.AsText;
-end;
-
-procedure TRZANCustomRichMemo.DoSelectAll;
-begin
-  Self.SelectAll;
+  if Self.Lines.Count >= 1 then
+  begin
+    {OK for write lines from zero, but why 130?}
+    Self.RZANLineNumber.RZAllLineNumber(Self,Abs(Self.Font.Height*Screen.PixelsPerInch div 130));
+    {OK for Self.VertScrollBar.Range > Self.Height}
+    // Self.RZANLineNumber.RZAllLineNumber(Self,Round(Self.VertScrollBar.Range/Self.Lines.Count));
+  end;
 end;
 
 {Events}
 
-procedure TRZANCustomRichMemo.Change;
+function TRZANCustomRichMemo.RZFirstVisibleLine :Integer;
+const
+  EM_GETFIRSTVISIBLELINE = 206;
 begin
-  Self.Status := rz_an_type_status_Modified;
-  if Self.DoParsing then Self.LanguageProc.LineParsing(Self,Self.ReservedWord);
+  Result := SendMessage(Self.Handle,EM_GETFIRSTVISIBLELINE,0,0);
+end;
+
+procedure TRZANCustomRichMemo.RZInfoUpdate;
+var
+  i : Integer;
+begin
+  {Caret}
+  Self.RZANStatusBar.RZCaretPosX := Self.CaretPos.X;
+  Self.RZANStatusBar.RZCaretPosY := Self.CaretPos.Y;
+  Self.RZCaretPosX := Self.CaretPos.X;
+  Self.RZCaretPosY := Self.CaretPos.Y;
+  {Line Number}
+  Self.RZANLineNumber.RowCount := Self.Lines.Count + 1;
+  if Self.Lines.Count >= 1 then
+  begin
+    for i := 1 to Self.Lines.Count do
+    begin
+      Self.RZANLineNumber.RowHeights[i-1] := Round(Self.VertScrollBar.Range/Self.Lines.Count);
+    end;
+  end;
+  Self.RZANLineNumber.TopRow := Self.RZFirstVisibleLine;
+  Self.RZAllLineNumber;
+end;
+
+procedure TRZANCustomRichMemo.RZLanguageRefresh;
+begin
+  Self.RZLanguage := Self.RZLanguage;
+end;
+
+procedure TRZANCustomRichMemo.Change;
+var
+  LLineText : WideString;
+  LAbsolutePos : LongInt;
+begin
+  Self.RZStatus := rz_an_type_status_Modified;
+  LLineText := Self.Lines[Self.CaretPos.Y];
+  LAbsolutePos := Self.SelStart - Self.CaretPos.X;
+  if Self.RZDoParsing then Self.RZANLanguage.RZLineParsing(Self,Self.RZReservedWords,LLineText,LAbsolutePos);
+  Self.RZInfoUpdate;
+  Self.RZDoParsing := True;
   inherited;
 end;
 
 procedure TRZANCustomRichMemo.DoEnter;
 begin
-  Self._SetStatusBarCaret;
-  inherited;
-end;
-
-procedure TRZANCustomRichMemo.MouseDown (Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-begin
-  Self._SetStatusBarCaret;
+  Self.RZInfoUpdate;
   inherited;
 end;
 
 procedure TRZANCustomRichMemo.KeyDown (var Key: Word; Shift: TShiftState);
 begin
-  Self._SetStatusBarCaret;
+  Self.RZInfoUpdate;
   if Key = VK_TAB then
   begin
     // Key:= 0;
@@ -399,14 +406,41 @@ end;
 
 procedure TRZANCustomRichMemo.KeyPress (var Key: char);
 begin
-  Self._SetStatusBarCaret;
+  Self.RZInfoUpdate;
   inherited;
 end;
 
 procedure TRZANCustomRichMemo.KeyUp (var Key: Word; Shift: TShiftState);
 begin
-  Self._SetStatusBarCaret;
+  Self.RZInfoUpdate;
   inherited;
+end;
+
+procedure TRZANCustomRichMemo.MouseDown (Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  Self.RZInfoUpdate;
+  inherited;
+end;
+
+procedure TRZANCustomRichMemo.MouseWheel (Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint;
+  var Handled: Boolean);
+begin
+  Self.RZInfoUpdate;
+  inherited;
+end;
+
+{Scroll}
+
+procedure TRZANCustomRichMemo.WndProc(var Message: TMessage);
+begin
+  inherited;
+  if Message.Msg = WM_VSCROLL then
+    if Assigned(FOnScroll) then FOnScroll(Self,Message);
+end;
+
+procedure TRZANCustomRichMemo.DoScroll (Sender: TObject; AMessage: TMessage);
+begin
+  Self.RZInfoUpdate;
 end;
 
 end.

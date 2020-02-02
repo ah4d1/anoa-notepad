@@ -1,4 +1,4 @@
-// This file is part of Anoa Notepad project
+// This file is part of Anoa-Notepad project
 // Copyright (C)2019 Ahadi Aprianto <ahadi.aprianto@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -11,8 +11,8 @@
 // misunderstandings, we consider an application to constitute a
 // "derivative work" for the purpose of this license if it does any of the
 // following:
-// 1. Integrates source code from Anoa Notepad.
-// 2. Integrates/includes/aggregates Anoa Notepad into a proprietary executable
+// 1. Integrates source code from Anoa-Notepad.
+// 2. Integrates/includes/aggregates Anoa-Notepad into a proprietary executable
 //    installer, such as those produced by InstallShield.
 // 3. Links to a library or executes a program that does any of the above.
 //
@@ -38,17 +38,11 @@ uses
 ;
 
 type
-  rz_an_type_Language = (rz_an_type_lang_Java,rz_an_type_lang_Pascal,rz_an_type_lang_Python,rz_an_type_lang_Text);
+  rz_an_type_Language = (rz_an_type_lang_Java,rz_an_type_lang_Pascal,rz_an_type_lang_Python,rz_an_type_lang_Text,rz_an_type_lang_All);
   rz_an_type_Status = (rz_an_type_status_Ready,rz_an_type_status_Modified,rz_an_type_status_Saved);
   rz_an_type_Style = (rz_an_type_style_Normal,rz_an_type_style_Dark);
 
 const
-  rz_an_var_FileFilterIndex_All = 1; // begin at 1
-  rz_an_var_FileFilterIndex_Java = 2;
-  rz_an_var_FileFilterIndex_Pascal = 3;
-  rz_an_var_FileFilterIndex_Python = 4;
-  rz_an_var_FileFilterIndex_Text = 5;
-  rz_an_var_FileFilterIndex_Default = 5;
   {Style}
   rz_an_var_Style_Color_Normal = clWhite;
   rz_an_var_Style_FontColor_Normal = clBlack;

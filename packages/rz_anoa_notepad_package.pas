@@ -11,7 +11,8 @@ uses
   RZ_Anoa_Notepad, rz_an_cmp_richmemo, rz_an_cmp_statusbar, 
   rz_an_pas_opendialog, rz_an_pas_var, rz_an_pas_savedialog, 
   rz_an_pas_reserved_word, rz_an_pas_tools, rz_an_pas_language, 
-  rz_an_cmp_pagecontrol, rz_an_pas_tabsheet, LazarusPackageIntf;
+  rz_an_cmp_pagecontrol, rz_an_pas_tabsheet, rz_an_cmp_linenumber,
+  LazarusPackageIntf;
 
 implementation
 
