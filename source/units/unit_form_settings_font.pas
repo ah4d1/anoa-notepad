@@ -32,7 +32,7 @@ unit unit_form_settings_font;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, rz_an_cmp_pagecontrol;
 
 type
 
@@ -46,10 +46,10 @@ type
     GroupBox1: TGroupBox;
     Label1: TLabel;
     Label2: TLabel;
-    procedure ButtonCancelClick(Sender: TObject);
-    procedure ButtonOKClick(Sender: TObject);
-    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure ButtonOKClick(Sender: TObject);
+    procedure ButtonCancelClick(Sender: TObject);
   private
 
   public
@@ -68,6 +68,14 @@ uses
 
 { TFormSettingsFont }
 
+procedure TFormSettingsFont.FormCreate(Sender: TObject);
+begin
+  FormMain.RZANPageControlMain.RZGetRZEditor(FormMain.RZANPageControlMain.Pages[FormMain.RZANPageControlMain.ActivePageIndex]);
+  Self.ComboBoxName.Items.Assign(Screen.Fonts);
+  Self.ComboBoxName.Text := FormMain.RZANPageControlMain.RZEditor.Font.Name;
+  Self.ComboBoxSize.Text := IntToStr(FormMain.RZANPageControlMain.RZEditor.Font.Size);
+end;
+
 procedure TFormSettingsFont.FormClose(Sender: TObject;
   var CloseAction: TCloseAction);
 begin
@@ -77,9 +85,9 @@ end;
 
 procedure TFormSettingsFont.ButtonOKClick(Sender: TObject);
 begin
-  FormMain.RZANPageControlMain.TabSheet[FormMain.RZANPageControlMain.TabIndex].Editor.Font.Name := Self.ComboBoxName.Text;
-  FormMain.RZANPageControlMain.TabSheet[FormMain.RZANPageControlMain.TabIndex].Editor.Font.Size := StrToInt(Self.ComboBoxSize.Text);
-  FormMain.RZANPageControlMain.TabSheet[FormMain.RZANPageControlMain.TabIndex].Editor.Language := FormMain.RZANPageControlMain.TabSheet[FormMain.RZANPageControlMain.TabIndex].Editor.Language;
+  FormMain.RZANPageControlMain.RZEditor.Font.Name := Self.ComboBoxName.Text;
+  FormMain.RZANPageControlMain.RZEditor.Font.Size := StrToInt(Self.ComboBoxSize.Text);
+  FormMain.RZANPageControlMain.RZEditor.RZLanguageRefresh;
   FormMain.Enabled := True;
   Self.Release;
 end;
@@ -88,13 +96,6 @@ procedure TFormSettingsFont.ButtonCancelClick(Sender: TObject);
 begin
   FormMain.Enabled := True;
   Self.Release;
-end;
-
-procedure TFormSettingsFont.FormCreate(Sender: TObject);
-begin
-  Self.ComboBoxName.Items.Assign(Screen.Fonts);
-  Self.ComboBoxName.Text := FormMain.RZANPageControlMain.TabSheet[FormMain.RZANPageControlMain.TabIndex].Editor.Font.Name;
-  Self.ComboBoxSize.Text := IntToStr(FormMain.RZANPageControlMain.TabSheet[FormMain.RZANPageControlMain.TabIndex].Editor.Font.Size);
 end;
 
 end.

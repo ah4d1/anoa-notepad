@@ -51,7 +51,8 @@ uses
   rz_an_cmp_pagecontrol,
   rz_an_cmp_richmemo,
   rz_an_cmp_statusbar
-;
+, Types
+  , Messages;
 
 type
 
@@ -97,7 +98,6 @@ type
     PrinterSetupDialogMain: TPrinterSetupDialog;
     RZANPageControlMain: TRZANPageControl;
     RZANStatusBarMain: TRZANStatusBar;
-    TimerRichMemo: TTimer;
     TimerFormCreate: TTimer;
     ToolBarMemo: TToolBar;
     ToolButton1: TToolButton;
@@ -118,7 +118,6 @@ type
     procedure FormCreate(Sender: TObject);
     procedure TimerFormCreateTimer(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
-    procedure TimerRichMemoTimer(Sender: TObject);
     {MainMenu}
     {MainMenu - File}
     procedure MenuItemFileNewClick(Sender: TObject);
@@ -179,7 +178,7 @@ end;
 
 procedure TFormMain.TimerFormCreateTimer(Sender: TObject);
 begin
-  Self.RZANPageControlMain.AddSheet;
+  Self.RZANPageControlMain.RZAddSheet('');
   Self.TimerFormCreate.Enabled := False;
 end;
 
@@ -188,31 +187,26 @@ begin
   Application.Terminate;
 end;
 
-procedure TFormMain.TimerRichMemoTimer(Sender: TObject);
-begin
-  Self.RZANPageControlMain.SubComponentUpdate;
-end;
-
 {MainMenu - File}
 
 procedure TFormMain.MenuItemFileNewClick(Sender: TObject);
 begin
-  Self.RZANPageControlMain.AddSheet;
+  Self.RZANPageControlMain.RZAddSheet('');
 end;
 
 procedure TFormMain.MenuItemFileOpenClick(Sender: TObject);
 begin
-  Self.RZANPageControlMain.OpenFile;
+  Self.RZANPageControlMain.RZOpenFile;
 end;
 
 procedure TFormMain.MenuItemFileSaveClick(Sender: TObject);
 begin
-  Self.RZANPageControlMain.SaveFile;
+  Self.RZANPageControlMain.RZSaveFile;
 end;
 
 procedure TFormMain.MenuItemFileSaveAsClick(Sender: TObject);
 begin
-  Self.RZANPageControlMain.SaveAsFile;
+  Self.RZANPageControlMain.RZSaveAsFile;
 end;
 
 procedure TFormMain.MenuItemFilePrintClick(Sender: TObject);
@@ -225,7 +219,7 @@ begin
   LPrintParameters.Margins.Bottom := 30;
   LPrintParameters.Margins.Left := 30;
   LPrintParameters.Margins.Right := 30;
-  Self.RZANPageControlMain.TabSheet[FormMain.RZANPageControlMain.TabIndex].Editor.Print(LPrintParameters);
+  // Self.RZANPageControlMain.RZANTabSheet[FormMain.RZANPageControlMain.RZANTabId].Editor.Print(LPrintParameters);
 end;
 
 procedure TFormMain.MenuItemFileExitClick(Sender: TObject);
@@ -237,32 +231,32 @@ end;
 
 procedure TFormMain.MenuItemEditUndoClick(Sender: TObject);
 begin
-  Self.RZANPageControlMain.Undo;
+  Self.RZANPageControlMain.RZUndo;
 end;
 
 procedure TFormMain.MenuItemEditRedoClick(Sender: TObject);
 begin
-  Self.RZANPageControlMain.Redo;
+  Self.RZANPageControlMain.RZRedo;
 end;
 
 procedure TFormMain.MenuItemEditCopyClick(Sender: TObject);
 begin
-  Self.RZANPageControlMain.Copy;
+  Self.RZANPageControlMain.RZCopy;
 end;
 
 procedure TFormMain.MenuItemEditCutClick(Sender: TObject);
 begin
-  Self.RZANPageControlMain.Cut;
+  Self.RZANPageControlMain.RZCut;
 end;
 
 procedure TFormMain.MenuItemEditPasteClick(Sender: TObject);
 begin
-  Self.RZANPageControlMain.Paste;
+  Self.RZANPageControlMain.RZPaste;
 end;
 
 procedure TFormMain.MenuItemEditSelectAllClick(Sender: TObject);
 begin
-  Self.RZANPageControlMain.SelectAll;
+  Self.RZANPageControlMain.RZSelectAll;
 end;
 
 {MainMenu - Settings}
@@ -276,32 +270,32 @@ end;
 
 procedure TFormMain.MenuItemSettingsLanguageTextClick(Sender: TObject);
 begin
-  Self.RZANPageControlMain.SetNewLanguage(rz_an_type_lang_Text);
+  Self.RZANPageControlMain.RZSetNewLanguage(rz_an_type_lang_Text);
 end;
 
 procedure TFormMain.MenuItemSettingsLanguageJavaClick(Sender: TObject);
 begin
-  Self.RZANPageControlMain.SetNewLanguage(rz_an_type_lang_Java);
+  Self.RZANPageControlMain.RZSetNewLanguage(rz_an_type_lang_Java);
 end;
 
 procedure TFormMain.MenuItemSettingsLanguagePascalClick(Sender: TObject);
 begin
-  Self.RZANPageControlMain.SetNewLanguage(rz_an_type_lang_Pascal);
+  Self.RZANPageControlMain.RZSetNewLanguage(rz_an_type_lang_Pascal);
 end;
 
 procedure TFormMain.MenuItemMemoLanguagePythonClick(Sender: TObject);
 begin
-  Self.RZANPageControlMain.SetNewLanguage(rz_an_type_lang_Python);
+  Self.RZANPageControlMain.RZSetNewLanguage(rz_an_type_lang_Python);
 end;
 
 procedure TFormMain.MenuItemMemoSettingsEditorStyleNormalClick(Sender: TObject);
 begin
-  Self.RZANPageControlMain.TabSheet[FormMain.RZANPageControlMain.TabIndex].Editor.Style := rz_an_type_style_Normal;
+  Self.RZANPageControlMain.RZSetNewStyle(rz_an_type_style_Normal);
 end;
 
 procedure TFormMain.MenuItemMemoSettingsEditorStyleDarkClick(Sender: TObject);
 begin
-  Self.RZANPageControlMain.TabSheet[FormMain.RZANPageControlMain.TabIndex].Editor.Style := rz_an_type_style_Dark;
+  Self.RZANPageControlMain.RZSetNewStyle(rz_an_type_style_Dark);
 end;
 
 {MainMenu - Help}
@@ -334,12 +328,12 @@ end;
 
 procedure TFormMain.MenuItemPopupAddTabClick(Sender: TObject);
 begin
-  Self.RZANPageControlMain.AddSheet;
+  Self.RZANPageControlMain.RZAddSheet('');
 end;
 
 procedure TFormMain.MenuItemPopupDeleteTabClick(Sender: TObject);
 begin
-  Self.RZANPageControlMain.CloseActiveSheet;
+  Self.RZANPageControlMain.RZANCloseSheet;
 end;
 
 end.

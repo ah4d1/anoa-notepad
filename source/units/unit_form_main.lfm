@@ -3,7 +3,7 @@ object FormMain: TFormMain
   Height = 711
   Top = 117
   Width = 1023
-  Caption = 'Anoa-Notepad - v.1.7-R'
+  Caption = 'Anoa-Notepad - v.1.8-R'
   ClientHeight = 681
   ClientWidth = 1023
   DesignTimePPI = 144
@@ -129,20 +129,20 @@ object FormMain: TFormMain
       item
         Alignment = taCenter
         Text = 'Ready'
-        Width = 100
+        Width = 150
       end    
       item
         Alignment = taCenter
         Text = 'Text'
-        Width = 100
+        Width = 150
       end    
       item
         Alignment = taCenter
         Text = '1:0'
-        Width = 150
+        Width = 225
       end    
       item
-        Width = 50
+        Width = 75
       end>
     SimplePanel = False
   end
@@ -156,7 +156,7 @@ object FormMain: TFormMain
     ImagesWidth = 24
     PopupMenu = PopupMenuPageControl
     TabOrder = 2
-    StatusBar = RZANStatusBarMain
+    RZANStatusBar = RZANStatusBarMain
   end
   object MainMenuMemo: TMainMenu
     Images = ImageListMain
@@ -1003,11 +1003,5 @@ object FormMain: TFormMain
     OnTimer = TimerFormCreateTimer
     left = 384
     top = 136
-  end
-  object TimerRichMemo: TTimer
-    Interval = 200
-    OnTimer = TimerRichMemoTimer
-    left = 557
-    top = 135
   end
 end
