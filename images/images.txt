@@ -14,6 +14,7 @@ copy.png : Icon made by srip from www.flaticon.com
 cut.png : Icon made by Smashicons from www.flaticon.com
 data-table.png : Icon made by Freepik from www.flaticon.com
 edit.png : Icon made by srip from www.flaticon.com
+edit-red.png : Modification from edit.png
 folder.png : Icon made by Freepik from www.flaticon.com
 info.png : Icon made by Roundicons from www.flaticon.com
 paste.png : Icon made by Smashicons from www.flaticon.com
