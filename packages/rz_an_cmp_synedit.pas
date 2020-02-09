@@ -25,62 +25,70 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-unit rz_an_cmp_richmemo;
+unit rz_an_cmp_synedit;
 
 {$mode objfpc}{$H+}
 
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Graph, ComCtrls, Dialogs,
-  StdCtrls, RichMemo, LCLType, LCLIntf, Messages, Clipbrd, rz_an_pas_var;
+  Classes, SysUtils, Graphics, Dialogs, LCLType, SynEdit, rz_an_cmp_statusbar,
+  rz_an_pas_var, SynHighlighterPas, SynHighlighterJava, SynHighlighterPython;
 
 type
 
-  TRZANCustomRichMemo = class(TRichMemo)
+  {1.1.4}
+  TRZANCustomSynEdit = class(TSynEdit)
   private
-    {3. Text Editing}
-    {3.90}
-    FRZClipboard : TClipboard;
+    {5. Editor Format}
+    {5.20}
+    FRZLanguage : rz_an_type_Language;
+    FRZLangPascal : TSynPasSyn;
+    FRZLangJava : TSynJavaSyn;
+    FRZLangPython : TSynPythonSyn;
     {7. Caret}
     {7.1}
     FRZCaretPosX : Integer;
     {7.2}
     FRZCaretPosY : Integer;
   protected
-    {3. Text Editing}
-    {3.90}
-    property RZClipboard : TClipboard read FRZClipboard write FRZClipboard;
+    {5. Editor Format}
+    {5.20}
+    procedure SetRZLanguage (const AValue: rz_an_type_Language);
     {7. Caret}
     {7.1}
     procedure SetRZCaretPosX (const AValue: Integer);
     {7.2}
     procedure SetRZCaretPosY (const AValue: Integer);
+    {8. Events}
+    {8.1}
+    procedure RZDoChange (Sender : TObject);
+    {8.2}
+    procedure RZDoEnter (Sender : TObject);
+    {8.3}
+    procedure KeyDown (var Key: Word; Shift: TShiftState); override;
+    {8.4}
+    procedure KeyPress (var Key: char); override;
+    {8.5}
+    procedure KeyUp (var Key: Word; Shift: TShiftState); override;
+    {8.8}
+    procedure RZDoClick (Sender : TObject);
+    {8.90}
+    procedure RZOnEventUpdate;
+    {5. Editor Format}
+    {5.20}
+    property RZLanguage : rz_an_type_Language read FRZLanguage write SetRZLanguage;
+    property RZLangJava : TSynJavaSyn read FRZLangJava write FRZLangJava;
+    property RZLangPascal : TSynPasSyn read FRZLangPascal write FRZLangPascal;
+    property RZLangPython : TSynPythonSyn read FRZLangPython write FRZLangPython;
     {7. Caret}
     {7.1}
     property RZCaretPosX : Integer read FRZCaretPosX write SetRZCaretPosX;
     {7.2}
     property RZCaretPosY : Integer read FRZCaretPosY write SetRZCaretPosY;
-    {8. Events}
-    {8.1}
-    procedure Change; override;
-    {8.2}
-    procedure DoEnter; override;
-    {8.3}
-    procedure KeyPress (var Key: char); override;
-    {8.4}
-    procedure KeyDown (var Key: Word; Shift: TShiftState); override;
-    {8.5}
-    procedure KeyUp (var Key: Word; Shift: TShiftState); override;
-    {8.6}
-    procedure MouseDown (Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
-    {8.7}
-    procedure MouseWheel (Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
-    {8.90}
-    procedure RZOnEventUpdate;
   public
     {1. Application}
-    {1.1.3}
+    {1.1.4}
     constructor Create (AOwner : TComponent); override;
     {2. File Operation}
     {2.3}
@@ -102,8 +110,12 @@ type
     procedure RZSelectAll;
   end;
 
-  TRZANRichMemo = class(TRZANCustomRichMemo)
+  {1.1.4}
+  TRZANSynEdit = class(TRZANCustomSynEdit)
   public
+    {5. Editor Format}
+    {5.20}
+    property RZLanguage;
     {7. Caret}
     {7.1}
     property RZCaretPosX;
@@ -116,33 +128,42 @@ implementation
 uses
   rz_an_cmp_tabsheet;
 
-{1.1.3}
-constructor TRZANCustomRichMemo.Create (AOwner : TComponent);
+{1. Application}
+
+{1.1.4}
+constructor TRZANCustomSynEdit.Create (AOwner : TComponent);
 begin
   {1. Application}
   {1.1}
   inherited Create(AOwner);
-  Self.Color := clWhite;
   Self.Font.Name := 'Courier New';
   Self.Font.Size := 10;
   Self.Font.Color := clBlack;
   Self.Font.Quality := fqDraft;
-  Self.ScrollBars := ssBoth;
-  {3. Text Editing}
-  {3.90}
-  Self.RZClipboard := TClipboard.Create;
+  {5. Editor Format}
+  {5.20}
+  Self.RZLangJava := TSynJavaSyn.Create(Self);
+  Self.RZLangPascal := TSynPasSyn.Create(Self);
+  Self.RZLangPython := TSynPythonSyn.Create(Self);
+  {8. Events}
+  {8.1}
+  Self.OnChange := @Self.RZDoChange;
+  {8.2}
+  Self.OnEnter := @Self.RZDoEnter;
+  {8.8}
+  Self.OnClick := @Self.RZDoClick;
 end;
 
 {2. File Operation}
 
 {2.3}
-procedure TRZANCustomRichMemo.RZOpen (AFileName : TFileName);
+procedure TRZANCustomSynEdit.RZOpen (AFileName : TFileName);
 begin
   Self.Lines.LoadFromFile(AFileName);
 end;
 
 {2.4}
-procedure TRZANCustomRichMemo.RZSave (AFileName : TFileName);
+procedure TRZANCustomSynEdit.RZSave (AFileName : TFileName);
 begin
   Self.Lines.SaveToFile(AFileName);
 end;
@@ -150,78 +171,87 @@ end;
 {3. Text Editing}
 
 {3.1}
-procedure TRZANCustomRichMemo.RZUndo;
+procedure TRZANCustomSynEdit.RZUndo;
 begin
   Self.Undo;
 end;
 
 {3.2}
-procedure TRZANCustomRichMemo.RZRedo;
+procedure TRZANCustomSynEdit.RZRedo;
 begin
   Self.Redo;
 end;
 
 {3.3}
-procedure TRZANCustomRichMemo.RZCopy;
+procedure TRZANCustomSynEdit.RZCopy;
 begin
-  Self.RZClipboard.Clear;
-  Self.RZClipboard.AsText := Self.SelText;
+  Self.CopyToClipboard;
 end;
 
 {3.4}
-procedure TRZANCustomRichMemo.RZCut;
+procedure TRZANCustomSynEdit.RZCut;
 begin
-  Self.RZClipboard.AsText := Self.SelText;
-  Self.SelText := '';
+  Self.CutToClipboard;
 end;
 
 {3.5}
-procedure TRZANCustomRichMemo.RZPaste;
+procedure TRZANCustomSynEdit.RZPaste;
 begin
-  Self.SelText := Self.RZClipboard.AsText;
+  Self.PasteFromClipboard;
 end;
 
 {3.6}
-procedure TRZANCustomRichMemo.RZSelectAll;
+procedure TRZANCustomSynEdit.RZSelectAll;
 begin
   Self.SelectAll;
+end;
+
+{5. Editor Format}
+
+{5.20}
+procedure TRZANCustomSynEdit.SetRZLanguage (const AValue: rz_an_type_Language);
+begin
+  Self.FRZLanguage := AValue;
+  case Self.RZLanguage of
+    rz_an_type_lang_Java : Self.Highlighter := Self.RZLangJava;
+    rz_an_type_lang_Pascal : Self.Highlighter := Self.RZLangPascal;
+    rz_an_type_lang_Python : Self.Highlighter := Self.RZLangPython;
+  end;
 end;
 
 {7. Caret}
 
 {7.1}
-procedure TRZANCustomRichMemo.SetRZCaretPosX (const AValue : Integer);
+procedure TRZANCustomSynEdit.SetRZCaretPosX (const AValue : Integer);
 begin
   Self.FRZCaretPosX := AValue;
-  if (Self.Parent <> nil) then (Self.Parent as TRZANTabSheet).RZCaretPosX := Self.RZCaretPosX;
+  if (Self.Parent <> nil) then (Self.Parent as TRZANTabSheet).RZCaretPosX := Self.RZCaretPosX - 1;
 end;
 
 {7.2}
-procedure TRZANCustomRichMemo.SetRZCaretPosY (const AValue : Integer);
+procedure TRZANCustomSynEdit.SetRZCaretPosY (const AValue : Integer);
 begin
   Self.FRZCaretPosY := AValue;
-  if (Self.Parent <> nil) then (Self.Parent as TRZANTabSheet).RZCaretPosY := Self.RZCaretPosY + 1;
+  if (Self.Parent <> nil) then (Self.Parent as TRZANTabSheet).RZCaretPosY := Self.RZCaretPosY;
 end;
 
 {8. Events}
 
 {8.1}
-procedure TRZANCustomRichMemo.Change;
+procedure TRZANCustomSynEdit.RZDoChange (Sender : TObject);
 begin
   Self.RZOnEventUpdate;
   (Self.Parent as TRZANTabSheet).RZStatus := rz_an_type_status_Modified;
-  inherited;
 end;
 
 {8.2}
-procedure TRZANCustomRichMemo.DoEnter;
+procedure TRZANCustomSynEdit.RZDoEnter (Sender : TObject);
 begin
   Self.RZOnEventUpdate;
-  inherited;
 end;
 
 {8.3}
-procedure TRZANCustomRichMemo.KeyDown (var Key: Word; Shift: TShiftState);
+procedure TRZANCustomSynEdit.KeyDown (var Key: Word; Shift: TShiftState);
 begin
   Self.RZOnEventUpdate;
   if Key = VK_TAB then
@@ -233,39 +263,30 @@ begin
 end;
 
 {8.4}
-procedure TRZANCustomRichMemo.KeyPress (var Key: char);
+procedure TRZANCustomSynEdit.KeyPress (var Key: char);
 begin
   Self.RZOnEventUpdate;
   inherited;
 end;
 
 {8.5}
-procedure TRZANCustomRichMemo.KeyUp (var Key: Word; Shift: TShiftState);
+procedure TRZANCustomSynEdit.KeyUp (var Key: Word; Shift: TShiftState);
 begin
   Self.RZOnEventUpdate;
   inherited;
 end;
 
-{8.6}
-procedure TRZANCustomRichMemo.MouseDown (Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+{8.8}
+procedure TRZANCustomSynEdit.RZDoClick (Sender : TObject);
 begin
   Self.RZOnEventUpdate;
-  inherited;
 end;
 
-{8.7}
-procedure TRZANCustomRichMemo.MouseWheel (Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint;
-  var Handled: Boolean);
+{8.90}
+procedure TRZANCustomSynEdit.RZOnEventUpdate;
 begin
-  Self.RZOnEventUpdate;
-  inherited;
-end;
-
-{8.7}
-procedure TRZANCustomRichMemo.RZOnEventUpdate;
-begin
-  Self.RZCaretPosX := Self.CaretPos.X;
-  Self.RZCaretPosY := Self.CaretPos.Y;
+  Self.RZCaretPosX := Self.CaretX;
+  Self.RZCaretPosY := Self.CaretY;
 end;
 
 end.

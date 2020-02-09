@@ -25,27 +25,44 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-unit rz_an_pas_var;
+unit rz_an_cmp_opendialog;
 
 {$mode objfpc}{$H+}
 
 interface
 
 uses
-  Classes, SysUtils, Graphics;
+  Classes, SysUtils, Dialogs, rz_an_pas_var;
 
 type
-  rz_an_type_Editor = (rz_an_type_editor_text,rz_an_type_editor_syntax);
-  rz_an_type_Language = (rz_an_type_lang_Java,rz_an_type_lang_Pascal,rz_an_type_lang_Python,rz_an_type_lang_Text);
-  rz_an_type_Status = (rz_an_type_status_Ready,rz_an_type_status_Modified,rz_an_type_status_Saved);
-  rz_an_type_Style = (rz_an_type_style_Normal,rz_an_type_style_Dark);
-
-const
-  {Image Index}
-  rz_an_var_ImageIndex_Saved = 8;
-  rz_an_var_ImageIndex_Modified = 14;
+  TRZANOpenDialog = class(TOpenDialog)
+  public
+    constructor Create (AOwner : TComponent); override;
+    function Execute : Boolean; override;
+  end;
 
 implementation
+
+{Open Dialog}
+
+constructor TRZANOpenDialog.Create (AOwner : TComponent);
+begin
+  inherited Create(AOwner);
+  // see rz_an_type_Language type
+  Self.Filter := ''
+    + 'Java Files (*.java)|*.java'
+    + '|Pascal Files (*.pas)|*.pas'
+    + '|Python Files (*.py)|*.py'
+    + '|Text Files (*.txt)|*.txt'
+    + '|All Files (*.*)|*.*'
+  ;
+end;
+
+function TRZANOpenDialog.Execute : Boolean;
+begin
+  Self.FileName := '';
+  inherited;
+end;
 
 end.
 

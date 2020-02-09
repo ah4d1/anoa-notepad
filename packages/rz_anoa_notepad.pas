@@ -32,8 +32,7 @@ unit RZ_Anoa_Notepad;
 interface
 
 uses
-  Classes, SysUtils, LResources, rz_an_cmp_pagecontrol, rz_an_cmp_richmemo, rz_an_cmp_linenumber,
-  rz_an_cmp_statusbar;
+  Classes, SysUtils, LResources, rz_an_cmp_pagecontrol, rz_an_cmp_statusbar;
 
 procedure Register;
 
@@ -42,7 +41,7 @@ implementation
 procedure Register;
 begin
   {$I rz_anoa_notepad_icon.lrs}
-  RegisterComponents('rzAnoaNotepad',[TRZANPageControl,TRZANRichMemo,TRZANLineNumber,TRZANStatusBar]);
+  RegisterComponents('rzAnoaNotepad',[TRZANPageControl,TRZANStatusBar]);
 end;
 
 end.

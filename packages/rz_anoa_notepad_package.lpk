@@ -11,7 +11,7 @@
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="12">
+    <Files Count="9">
       <Item1>
         <Filename Value="rz_anoa_notepad.pas"/>
         <HasRegisterProc Value="True"/>
@@ -26,52 +26,43 @@
         <UnitName Value="rz_an_cmp_statusbar"/>
       </Item3>
       <Item4>
-        <Filename Value="rz_an_pas_opendialog.pas"/>
-        <UnitName Value="rz_an_pas_opendialog"/>
+        <Filename Value="rz_an_cmp_opendialog.pas"/>
+        <UnitName Value="rz_an_cmp_opendialog"/>
       </Item4>
       <Item5>
         <Filename Value="rz_an_pas_var.pas"/>
         <UnitName Value="rz_an_pas_var"/>
       </Item5>
       <Item6>
-        <Filename Value="rz_an_pas_savedialog.pas"/>
-        <UnitName Value="rz_an_pas_savedialog"/>
+        <Filename Value="rz_an_cmp_savedialog.pas"/>
+        <UnitName Value="rz_an_cmp_savedialog"/>
       </Item6>
       <Item7>
-        <Filename Value="rz_an_pas_reserved_word.pas"/>
-        <UnitName Value="rz_an_pas_reserved_word"/>
-      </Item7>
-      <Item8>
-        <Filename Value="rz_an_pas_tools.pas"/>
-        <UnitName Value="rz_an_pas_tools"/>
-      </Item8>
-      <Item9>
-        <Filename Value="rz_an_pas_language.pas"/>
-        <UnitName Value="rz_an_pas_language"/>
-      </Item9>
-      <Item10>
         <Filename Value="rz_an_cmp_pagecontrol.pas"/>
         <UnitName Value="rz_an_cmp_pagecontrol"/>
-      </Item10>
-      <Item11>
-        <Filename Value="rz_an_pas_tabsheet.pas"/>
-        <UnitName Value="rz_an_pas_tabsheet"/>
-      </Item11>
-      <Item12>
-        <Filename Value="rz_an_cmp_linenumber.pas"/>
-        <UnitName Value="rz_an_cmp_linenumber"/>
-      </Item12>
+      </Item7>
+      <Item8>
+        <Filename Value="rz_an_cmp_tabsheet.pas"/>
+        <UnitName Value="rz_an_cmp_tabsheet"/>
+      </Item8>
+      <Item9>
+        <Filename Value="rz_an_cmp_synedit.pas"/>
+        <UnitName Value="rz_an_cmp_synedit"/>
+      </Item9>
     </Files>
-    <RequiredPkgs Count="3">
+    <RequiredPkgs Count="4">
       <Item1>
-        <PackageName Value="richmemopackage"/>
+        <PackageName Value="SynEdit"/>
       </Item1>
       <Item2>
-        <PackageName Value="LCL"/>
+        <PackageName Value="richmemopackage"/>
       </Item2>
       <Item3>
-        <PackageName Value="FCL"/>
+        <PackageName Value="LCL"/>
       </Item3>
+      <Item4>
+        <PackageName Value="FCL"/>
+      </Item4>
     </RequiredPkgs>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>

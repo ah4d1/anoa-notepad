@@ -32,270 +32,263 @@ unit rz_an_cmp_pagecontrol;
 interface
 
 uses
-  Classes, SysUtils, ComCtrls, Controls, Dialogs, Graphics, rz_an_cmp_statusbar,
-  rz_an_pas_opendialog, rz_an_pas_savedialog, rz_an_pas_reserved_word, rz_an_pas_language,
-  rz_an_pas_var, rz_an_pas_tabsheet, rz_an_pas_tools, rz_an_cmp_richmemo;
+  Classes, SysUtils, ComCtrls, Controls, Dialogs, Graphics, Forms, rz_an_cmp_statusbar,
+  rz_an_cmp_opendialog, rz_an_cmp_savedialog, rz_an_pas_var, rz_an_cmp_tabsheet,
+  rz_an_cmp_richmemo, rz_an_cmp_synedit;
 
 type
 
   TRZANCustomPageControl = class(TPageControl)
   private
-    {Properties}
-    FRZTabInit : Boolean;
-    FRZTabId : Byte;
-    FRZDoParsing :Boolean;
-    {Sub-Components}
-    FRZEditor : TRZANRichMemo;
+    {1. Application}
+    {1.1.5}
     FRZStatusBar : TRZANStatusBar;
+    {2. File Operation}
+    {2.20}
+    FRZTabId : Byte;
+    {2.21}
+    FRZTabInit : Boolean;
+    {2.6}
+    FRZActiveTabSheet : TRZANTabSheet;
   protected
-    procedure SetRZDoParsing (AValue : Boolean);
-    {Properties}
-    property RZTabInit : Boolean read FRZTabInit write FRZTabInit;
-    property RZTabId : Byte read FRZTabId write FRZTabId;
-    property RZDoParsing : Boolean read FRZDoParsing write SetRZDoParsing;
-    {Sub-Components}
-    property RZEditor : TRZANRichMemo read FRZEditor write FRZEditor;
+    {2. File Operation}
+    {2.6}
+    function GetRZActiveTabSheet : TRZANTabSheet;
+    {1. Application}
     property RZANStatusBar : TRZANStatusBar read FRZStatusBar write FRZStatusBar;
+    {2. File Operation}
+    {2.20}
+    property RZTabId : Byte read FRZTabId write FRZTabId;
+    {2.21}
+    property RZTabInit : Boolean read FRZTabInit write FRZTabInit;
+    {2.6}
+    property RZActiveTabSheet : TRZANTabSheet read GetRZActiveTabSheet;
   public
-    {Sub-Components}
+    {1. Application}
+    {1.3}
     RZANOpenDialog : TRZANOpenDialog;
+    {1.4}
     RZANSaveDialog : TRZANSaveDialog;
-    {Create}
+    {1. Application}
+    {1.1}
     constructor Create (AOwner : TComponent); override;
-    {Add & Close Sheet}
-    procedure RZAddSheet (AFileName : TFileName);
-    procedure RZANCloseSheet;
-    {Open and Save File}
+    {2. File Operation}
+    {2.1}
+    procedure RZAddSheet; overload;
+    procedure RZAddSheet (AFileName : TFileName); overload;
+    {2.2}
+    procedure RZCloseSheet;
+    {2.3}
     procedure RZOpenFile;
+    {2.4}
     procedure RZSaveFile;
     procedure RZSaveAsFile;
-    {Text Editing}
-    procedure RZTextEditing (AType : string);
-    procedure RZUndo;
-    procedure RZRedo;
-    procedure RZCopy;
-    procedure RZCut;
-    procedure RZPaste;
-    procedure RZSelectAll;
-    {Language}
-    procedure RZSetNewLanguage (ALanguage : rz_an_type_Language);
-    {Style}
-    procedure RZSetNewStyle (AStyle : rz_an_type_Style);
-    {Events}
+    {2.7}
     procedure Change; override;
-    {Methods}
-    procedure RZGetRZEditor (APage : TTabSheet);
+    {3. Text Editing}
+    {3.1}
+    procedure RZUndo;
+    {3.2}
+    procedure RZRedo;
+    {3.3}
+    procedure RZCopy;
+    {3.4}
+    procedure RZCut;
+    {3.5}
+    procedure RZPaste;
+    {3.6}
+    procedure RZSelectAll;
+    {5. Editor Format}
+    {5.20}
+    procedure RZSetNewLanguage (ALanguage : rz_an_type_Language);
+    {6. Editor Style}
+    {6.0}
+    procedure RZSetNewStyle (AStyle : rz_an_type_Style);
   end;
 
   TRZANPageControl = class(TRZANCustomPageControl)
-  public
-    property RZTabId;
-    property RZEditor;
   published
+    {1. Application}
+    {1.1.5}
     property RZANStatusBar;
   end;
 
 implementation
 
-{Create}
+{1. Application}
 
+{1.1.1}
 constructor TRZANCustomPageControl.Create (AOwner : TComponent);
 begin
+  {1. Application}
+  {1.1}
   inherited Create(AOwner);
-  {Sub-Components}
-  Self.RZANOpenDialog := TRZANOpenDialog.Create(Self);
-  Self.RZANSaveDialog := TRZANSaveDialog.Create(Self);
-  {Properties}
   Self.ImagesWidth := 24;
-  {RZANTabInit will be used to load file to existing editor at first app start}
-  Self.RZTabInit := True;
-  {RZANTabId will be used to set tab sheet number when added}
+  {1.3}
+  Self.RZANOpenDialog := TRZANOpenDialog.Create(Self);
+  {1.4}
+  Self.RZANSaveDialog := TRZANSaveDialog.Create(Self);
+  {2. File Operation}
+  {2.20}
   Self.RZTabId := 0;
+  {2.21}
+  Self.RZTabInit := True;
 end;
 
-{Get RZEditor}
+{2. File Operation}
 
-procedure TRZANCustomPageControl.RZGetRZEditor (APage : TTabSheet);
-var
-  i : Byte;
+{2.1}
+procedure TRZANCustomPageControl.RZAddSheet;
 begin
-  // The result will be stored at RZEditor property
-  for i := 0 to APage.ControlCount - 1 do
+  Self.RZAddSheet('');
+end;
+
+{2.1}
+procedure TRZANCustomPageControl.RZAddSheet (AFileName : TFileName);
+begin
+  with TRZANTabSheet.Create(Self) do
   begin
-    if (APage.Controls[i].ClassName) = 'TRZANRichMemo' then
-      Self.RZEditor := Self.Pages[Self.PageIndex].Controls[i] as TRZANRichMemo
-    ;
+    Parent := Self;
+    RZTabId := Self.RZTabId;
+    RZANStatusBar := Self.RZANStatusBar;
+    RZOpen(AFileName);
+    Show;
+    Self.RZTabId := Self.RZTabId + 1;
   end;
 end;
 
-{Add & Close Sheet}
-
-procedure TRZANCustomPageControl.RZAddSheet (AFileName : TFileName);
-var
-  LRZTabSheet : TRZANTabSheet;
+{2.2}
+procedure TRZANCustomPageControl.RZCloseSheet;
 begin
-  LRZTabSheet := TRZANTabSheet.Create(Self);
-  LRZTabSheet.Parent := Self;
-  if Self.RZTabId = 0 then LRZTabSheet.Caption := 'Note'
-    else LRZTabSheet.Caption := 'Note' + IntToStr(Self.RZTabId)
-  ;
-  LRZTabSheet.ImageIndex := 8;
-  LRZTabSheet.RZEditor.RZANStatusBar := Self.RZANStatusBar;
-  if Trim(AFileName) <> '' then
-  begin
-    LRZTabSheet.RZFileName := AFileName;
-    LRZTabSheet.RZEditor.RZOpen(AFileName);
-  end
+  if Self.PageCount > 1 then
+    Self.RZActiveTabSheet.RZClose
   else
   begin
-    LRZTabSheet.RZFileName := '';
+    if Self.RZActiveTabSheet.RZClose then Self.RZAddSheet;
   end;
-  LRZTabSheet.RZEditor.RZStatus := rz_an_type_status_Ready;
-  LRZTabSheet.Show;
-  Self.RZTabId := Self.RZTabId + 1;
 end;
 
-procedure TRZANCustomPageControl.RZANCloseSheet;
-begin
-  if Self.PageCount > 1 then Self.Pages[Self.ActivePageIndex].Free;
-end;
-
-{Open and Save File}
-
+{2.3}
 procedure TRZANCustomPageControl.RZOpenFile;
-var
-  LFileName : TFileName;
 begin
-  Self.RZGetRZEditor(Self.Pages[Self.PageIndex]);
-  Self.RZANOpenDialog.FilterIndex := Ord(Self.RZEditor.RZLanguage) + 1; // Filter Index begin at 1
+  Self.RZANOpenDialog.FilterIndex := Ord(Self.RZActiveTabSheet.RZLanguage) + 1; // Filter Index begin at 1
   if Self.RZANOpenDialog.Execute then
   begin
-    LFileName := Self.RZANOpenDialog.FileName;
-    if (Self.RZTabInit) and (Self.RZEditor.RZStatus = rz_an_type_status_Ready) then
-    begin
-      Self.RZEditor.RZOpen(LFileName);
-      Self.Pages[Self.ActivePageIndex].Caption := ExtractFileName(LFileName);
-      Self.RZTabInit := False;
-    end
+    if Self.RZTabInit then
+      Self.RZActiveTabSheet.RZOpen(Self.RZANOpenDialog.FileName)
     else
-      Self.RZAddSheet(LFileName)
+      Self.RZAddSheet(Self.RZANOpenDialog.FileName);
     ;
+    Self.RZTabInit := False;
   end;
-  Self.RZEditor.RZStatus := rz_an_type_status_Ready;
 end;
 
+{2.4}
 procedure TRZANCustomPageControl.RZSaveFile;
 begin
-  Self.RZGetRZEditor(Self.Pages[Self.PageIndex]);
-  if Trim(Self.FRZEditor.RZFileName) = '' then
-  begin
-    Self.RZSaveAsFile
-  end
+  Self.RZANSaveDialog.FilterIndex := Ord(Self.RZActiveTabSheet.RZLanguage) + 1; // Filter Index begin at 1
+  if Trim(Self.RZActiveTabSheet.RZFileName) <> '' then
+    Self.RZActiveTabSheet.RZSave(Self.RZActiveTabSheet.RZFileName)
   else
   begin
-    Self.RZGetRZEditor(Self.Pages[Self.PageIndex]);
-    Self.FRZEditor.RZSave(Self.FRZEditor.RZFileName);
-    Self.RZANStatusBar.RZStatus := rz_an_type_status_Saved;
+    if Self.RZANSaveDialog.Execute then
+    begin
+      Self.RZActiveTabSheet.RZSave(Self.RZANSaveDialog.FileName);
+    end;
   end;
 end;
 
+{2.4}
 procedure TRZANCustomPageControl.RZSaveAsFile;
-var
-  LFileName : TFileName;
 begin
-  Self.RZGetRZEditor(Self.Pages[Self.PageIndex]);
-  Self.RZANSaveDialog.FilterIndex := Ord(Self.FRZEditor.RZLanguage) + 1; // Filter Index begin at 1
+  Self.RZANSaveDialog.FilterIndex := Ord(Self.RZActiveTabSheet .RZLanguage) + 1; // Filter Index begin at 1
   if Self.RZANSaveDialog.Execute then
   begin
-    LFileName := Self.RZANSaveDialog.FileName;
-    Self.RZGetRZEditor(Self.Pages[Self.PageIndex]);
-    Self.RZEditor.RZSave(LFileName);
-    Self.Pages[Self.PageIndex].Caption := ExtractFileName(LFileName);
+    Self.RZActiveTabSheet.RZSave(Self.RZANSaveDialog.FileName);
   end;
 end;
 
-{Text Editing}
-
-procedure TRZANCustomPageControl.SetRZDoParsing (AValue : Boolean);
+{2.6}
+function TRZANCustomPageControl.GetRZActiveTabSheet : TRZANTabSheet;
 begin
-  Self.FRZDoParsing := AValue;
-  Self.RZGetRZEditor(Self.Pages[Self.PageIndex]);
-  Self.RZEditor.RZDoParsing := Self.RZDoParsing;
+  Self.FRZActiveTabSheet := (Self.Pages[Self.PageIndex] as TRZANTabSheet);
+  Result := Self.FRZActiveTabSheet;
 end;
 
-procedure TRZANCustomPageControl.RZTextEditing (AType : string);
-begin
-  Self.RZDoParsing := False;
-  Self.RZGetRZEditor(Self.Pages[Self.PageIndex]);
-  if AType = 'UNDO' then Self.RZEditor.RZUndo
-  else if AType = 'REDO' then Self.RZEditor.RZRedo
-  else if AType = 'COPY' then Self.RZEditor.RZCopy
-  else if AType = 'CUT' then Self.RZEditor.RZCut
-  else if AType = 'PASTE' then Self.RZEditor.RZPaste
-  else if AType = 'SELECTALL' then Self.RZEditor.RZSelectAll;
-  ;
-end;
-
-procedure TRZANCustomPageControl.RZUndo;
-begin
-  Self.RZTextEditing('UNDO');
-end;
-
-procedure TRZANCustomPageControl.RZRedo;
-begin
-  Self.RZTextEditing('REDO');
-end;
-
-procedure TRZANCustomPageControl.RZCopy;
-begin
-  Self.RZTextEditing('COPY');
-end;
-
-procedure TRZANCustomPageControl.RZCut;
-begin
-  Self.RZTextEditing('CUT');
-end;
-
-procedure TRZANCustomPageControl.RZPaste;
-begin
-  Self.RZTextEditing('PASTE');
-end;
-
-procedure TRZANCustomPageControl.RZSelectAll;
-begin
-  Self.RZTextEditing('SELECTALL');
-end;
-
-{Language}
-
-procedure TRZANCustomPageControl.RZSetNewLanguage (ALanguage : rz_an_type_Language);
-begin
-  Self.RZDoParsing := True;
-  Self.RZGetRZEditor(Self.Pages[Self.PageIndex]);
-  Self.RZEditor.RZLanguage := ALanguage;
-end;
-
-{Style}
-
-procedure TRZANCustomPageControl.RZSetNewStyle (AStyle : rz_an_type_Style);
-begin
-  Self.RZDoParsing := True;
-  Self.RZGetRZEditor(Self.Pages[Self.PageIndex]);
-  Self.RZEditor.RZStyle := AStyle;
-end;
-
-{Events}
-
+{2.7}
 procedure TRZANCustomPageControl.Change;
 begin
-  Self.RZGetRZEditor(Self.Pages[Self.PageIndex]);
-  Self.RZANStatusBar.RZStatus := Self.RZEditor.RZStatus;
-  Self.RZANStatusBar.RZLanguage := Self.RZEditor.RZLanguage;
-  Self.RZANStatusBar.RZCaretPosX := Self.RZEditor.RZCaretPosX;
-  Self.RZANStatusBar.RZCaretPosY := Self.RZEditor.RZCaretPosY;
-  Self.RZANStatusBar.RZFileName := Self.RZEditor.RZFileName;
-  Self.RZDoParsing := False;
+  if Self.RZActiveTabSheet.RZEditorType = rz_an_type_editor_text then
+  begin
+    Self.RZActiveTabSheet.RZANStatusBar.RZStatus := Self.RZActiveTabSheet.RZStatus;
+    Self.RZActiveTabSheet.RZANStatusBar.RZLanguage := Self.RZActiveTabSheet.RZLanguage;
+    Self.RZActiveTabSheet.RZANStatusBar.RZCaretPosX := Self.RZActiveTabSheet.RZTextEditor.RZCaretPosX;
+    Self.RZActiveTabSheet.RZANStatusBar.RZCaretPosY := Self.RZActiveTabSheet.RZTextEditor.RZCaretPosY;
+    Self.RZActiveTabSheet.RZANStatusBar.RZFileName := Self.RZActiveTabSheet.RZFileName;
+  end
+  else if Self.RZActiveTabSheet.RZEditorType = rz_an_type_editor_syntax then
+  begin
+    Self.RZActiveTabSheet.RZANStatusBar.RZStatus := Self.RZActiveTabSheet.RZStatus;
+    Self.RZActiveTabSheet.RZANStatusBar.RZLanguage := Self.RZActiveTabSheet.RZLanguage;
+    Self.RZActiveTabSheet.RZANStatusBar.RZCaretPosX := Self.RZActiveTabSheet.RZSynEditor.RZCaretPosX;
+    Self.RZActiveTabSheet.RZANStatusBar.RZCaretPosY := Self.RZActiveTabSheet.RZSynEditor.RZCaretPosY;
+    Self.RZActiveTabSheet.RZANStatusBar.RZFileName := Self.RZActiveTabSheet.RZFileName;
+  end;
   inherited;
+end;
+
+{3. Text Editing}
+
+{3.1}
+procedure TRZANCustomPageControl.RZUndo;
+begin
+  Self.RZActiveTabSheet.RZUndo;
+end;
+
+{3.2}
+procedure TRZANCustomPageControl.RZRedo;
+begin
+  Self.RZActiveTabSheet.RZRedo;
+end;
+
+{3.3}
+procedure TRZANCustomPageControl.RZCopy;
+begin
+  Self.RZActiveTabSheet.RZCopy;
+end;
+
+{3.4}
+procedure TRZANCustomPageControl.RZCut;
+begin
+  Self.RZActiveTabSheet.RZCut;
+end;
+
+{3.5}
+procedure TRZANCustomPageControl.RZPaste;
+begin
+  Self.RZActiveTabSheet.RZPaste;
+end;
+
+{3.6}
+procedure TRZANCustomPageControl.RZSelectAll;
+begin
+  Self.RZActiveTabSheet.RZSelectAll;
+end;
+
+{5. Editor Format}
+
+{5.20}
+procedure TRZANCustomPageControl.RZSetNewLanguage (ALanguage : rz_an_type_Language);
+begin
+  Self.RZActiveTabSheet.RZSetNewLanguage(ALanguage);
+end;
+
+{6. Editor Style}
+
+{6.0}
+procedure TRZANCustomPageControl.RZSetNewStyle (AStyle : rz_an_type_Style);
+begin
+  Self.RZActiveTabSheet.RZSetNewStyle(AStyle);
 end;
 
 end.
