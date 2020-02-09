@@ -32,7 +32,8 @@ unit unit_form_settings_font;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, rz_an_cmp_pagecontrol;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, rz_an_cmp_pagecontrol,
+  rz_an_cmp_tabsheet;
 
 type
 
@@ -69,11 +70,25 @@ uses
 { TFormSettingsFont }
 
 procedure TFormSettingsFont.FormCreate(Sender: TObject);
+var
+  LActiveTabSheet : TRZANTabSheet;
+  LActiveFontName : string;
+  LActiveFontSize : Byte;
 begin
-  FormMain.RZANPageControlMain.RZGetRZEditor(FormMain.RZANPageControlMain.Pages[FormMain.RZANPageControlMain.ActivePageIndex]);
+  LActiveTabSheet := (FormMain.RZANPageControlMain.Pages[FormMain.RZANPageControlMain.PageIndex] as TRZANTabSheet);
+  if LActiveTabSheet.RZTextEditor.Visible then
+  begin
+    LActiveFontName := LActiveTabSheet.RZTextEditor.Font.Name;
+    LActiveFontSize := LActiveTabSheet.RZTextEditor.Font.Size;
+  end
+  else if LActiveTabSheet.RZSynEditor.Visible then
+  begin
+    LActiveFontName := LActiveTabSheet.RZSynEditor.Font.Name;
+    LActiveFontSize := LActiveTabSheet.RZSynEditor.Font.Size;
+  end;
   Self.ComboBoxName.Items.Assign(Screen.Fonts);
-  Self.ComboBoxName.Text := FormMain.RZANPageControlMain.RZEditor.Font.Name;
-  Self.ComboBoxSize.Text := IntToStr(FormMain.RZANPageControlMain.RZEditor.Font.Size);
+  Self.ComboBoxName.Text := LActiveFontName;
+  Self.ComboBoxSize.Text := IntToStr(LActiveFontSize);
 end;
 
 procedure TFormSettingsFont.FormClose(Sender: TObject;
@@ -84,10 +99,24 @@ begin
 end;
 
 procedure TFormSettingsFont.ButtonOKClick(Sender: TObject);
+var
+  LActiveTabSheet : TRZANTabSheet;
+  LSelectedFontName : string;
+  LSelectedFontSize : Byte;
 begin
-  FormMain.RZANPageControlMain.RZEditor.Font.Name := Self.ComboBoxName.Text;
-  FormMain.RZANPageControlMain.RZEditor.Font.Size := StrToInt(Self.ComboBoxSize.Text);
-  FormMain.RZANPageControlMain.RZEditor.RZLanguageRefresh;
+  LActiveTabSheet := (FormMain.RZANPageControlMain.Pages[FormMain.RZANPageControlMain.PageIndex] as TRZANTabSheet);
+  LSelectedFontName := Self.ComboBoxName.Text;
+  LSelectedFontSize := StrToInt(Self.ComboBoxSize.Text);
+  if LActiveTabSheet.RZTextEditor.Visible then
+  begin
+    LActiveTabSheet.RZTextEditor.Font.Name := LSelectedFontName;
+    LActiveTabSheet.RZTextEditor.Font.Size := LSelectedFontSize;
+  end
+  else if LActiveTabSheet.RZSynEditor.Visible then
+  begin
+    LActiveTabSheet.RZSynEditor.Font.Name := LSelectedFontName;
+    LActiveTabSheet.RZSynEditor.Font.Size := LSelectedFontSize;
+  end;
   FormMain.Enabled := True;
   Self.Release;
 end;
