@@ -32,7 +32,7 @@ unit rz_an_cmp_richmemo;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Graph, ComCtrls, Dialogs,
+  Classes, SysUtils, LResources, Forms, Controls, Graphics, ComCtrls, Dialogs,
   StdCtrls, RichMemo, LCLType, LCLIntf, Messages, Clipbrd, rz_an_pas_var;
 
 type
