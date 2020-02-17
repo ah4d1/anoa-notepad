@@ -1,29 +1,27 @@
-// This file is part of Anoa-Notepad project
-// Copyright (C)2019 Ahadi Aprianto <ahadi.aprianto@gmail.com>
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either
-// version 2 of the License, or (at your option) any later version.
-//
-// Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
-// "derivative work" for the purpose of this license if it does any of the
-// following:
-// 1. Integrates source code from Anoa-Notepad.
-// 2. Integrates/includes/aggregates Anoa-Notepad into a proprietary executable
-//    installer, such as those produced by InstallShield.
-// 3. Links to a library or executes a program that does any of the above.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+{********************************************************************************
+
+This file is part of Anoa-Notepad project.
+
+Anoa-Notepad is a free and open source text and code editor for programmers,
+software developers, software engineers, and common users.
+
+Copyright(C)2019-2020 Ahadi Aprianto (ahadi.aprianto@gmail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+
+********************************************************************************}
 
 unit rz_an_cmp_tabsheet;
 
@@ -32,15 +30,16 @@ unit rz_an_cmp_tabsheet;
 interface
 
 uses
-  Classes, SysUtils, ComCtrls, Controls, Dialogs, Graphics, ExtCtrls, Grids, StdCtrls, Messages,
-  LCLIntf, rz_an_cmp_richmemo, rz_an_cmp_synedit, rz_an_cmp_statusbar, rz_an_cmp_opendialog,
-  rz_an_cmp_savedialog, rz_an_pas_var;
+  Classes, SysUtils, ComCtrls, Controls, Dialogs, Graphics, ExtCtrls, Grids, StdCtrls, Menus,
+  Messages, LCLIntf, rz_an_cmp_richmemo, rz_an_cmp_synedit, rz_an_cmp_statusbar,
+  rz_an_cmp_opendialog, rz_an_cmp_savedialog, rz_an_pas_var;
 
 type
 
   TRZANCustomTabSheet = class(TTabSheet)
   private
     {1. Application}
+    FRZPopupMenu : TPopupMenu;
     {1.1.5}
     FRZANStatusBar : TRZANStatusBar;
     {2. File Operation}
@@ -55,9 +54,12 @@ type
     FRZStatus : rz_an_type_Status;
     {5. Editor Format}
     {5.20}
-    FRZLanguage : rz_an_type_Language;
+    FRZEditorFormat : rz_an_type_EditorFormat;
     {5.30}
-    FRZEditorType : rz_an_type_Editor;
+    FRZEditorType : rz_an_type_EditorType;
+    {6. Editor Style}
+    {6.0}
+    FRZEditorStyle : rz_an_type_Style;
     {7. Caret}
     {7.1}
     FRZCaretPosX : Integer;
@@ -76,15 +78,19 @@ type
     procedure SetRZStatus (const AValue: rz_an_type_Status);
     {5. Editor Format}
     {5.20}
-    procedure SetRZLanguage (AValue : rz_an_type_Language);
+    procedure SetRZEditorFormat (AValue : rz_an_type_EditorFormat);
     {5.30}
-    procedure SetRZEditorType (AValue : rz_an_type_Editor);
+    procedure SetRZEditorType (AValue : rz_an_type_EditorType);
+    {6. Editor Style}
+    {6.0}
+    procedure SetRZEditorStyle (AValue : rz_an_type_Style);
     {7. Caret}
     {7.1}
     procedure SetRZCaretPosX (const AValue: Integer);
     {7.2}
     procedure SetRZCaretPosY (const AValue: Integer);
     {1. Application}
+    property RZPopupMenu : TPopupMenu read FRZPopupMenu write FRZPopupMenu;
     {1.1.5}
     property RZANStatusBar : TRZANStatusBar read FRZANStatusBar write FRZANStatusBar;
     {2. File Operation}
@@ -99,9 +105,12 @@ type
     property RZStatus : rz_an_type_Status read FRZStatus write SetRZStatus;
     {5. Editor Format}
     {5.20}
-    property RZLanguage : rz_an_type_Language read FRZLanguage write SetRZLanguage;
+    property RZEditorFormat : rz_an_type_EditorFormat read FRZEditorFormat write SetRZEditorFormat;
     {5.30}
-    property RZEditorType : rz_an_type_Editor read FRZEditorType write SetRZEditorType;
+    property RZEditorType : rz_an_type_EditorType read FRZEditorType write SetRZEditorType;
+    {6. Editor Style}
+    {6.0}
+    property RZEditorStyle : rz_an_type_Style read FRZEditorStyle write SetRZEditorStyle;
     {7. Caret}
     {7.1}
     property RZCaretPosX : Integer read FRZCaretPosX write SetRZCaretPosX;
@@ -140,15 +149,13 @@ type
     procedure RZSelectAll;
     {5. Editor Format}
     {5.20}
-    procedure RZSetNewLanguage (ALanguage : rz_an_type_Language);
-    {6. Editor Style}
-    {6.0}
-    procedure RZSetNewStyle (AStyle : rz_an_type_Style);
+    procedure RZChangeEditorFormat (AFormat : rz_an_type_EditorFormat);
   end;
 
   TRZANTabSheet = class(TRZANCustomTabSheet)
   public
     {1. Application}
+    property RZPopupMenu;
     {1.1.5}
     property RZANStatusBar;
     {2. File Operation}
@@ -161,10 +168,12 @@ type
     property RZStatus;
     {5. Editor Format}
     {5.20}
-    property RZLanguage;
+    property RZEditorFormat;
+    {5.30}
+    property RZEditorType;
     {6. Editor Style}
     {6.0}
-    property RZEditorType;
+    property RZEditorStyle;
     {7. Caret}
     {7.1}
     property RZCaretPosX;
@@ -196,7 +205,7 @@ begin
   Self.RZSynEditor.Visible := False;
   {5. Editor Format}
   {5.20}
-  Self.RZLanguage := rz_an_type_lang_Text;
+  Self.RZEditorFormat := rz_an_type_editorformat_Text;
 end;
 
 {2. File Operation}
@@ -205,8 +214,8 @@ end;
 procedure TRZANCustomTabSheet.DoShow;
 begin
   inherited;
-  if Self.RZEditorType = rz_an_type_editor_text then Self.RZTextEditor.SetFocus
-    else if Self.RZEditorType = rz_an_type_editor_syntax then Self.RZSynEditor.SetFocus
+  if Self.RZEditorType = rz_an_type_editortype_text then Self.RZTextEditor.SetFocus
+    else if Self.RZEditorType = rz_an_type_editortype_syntax then Self.RZSynEditor.SetFocus
   ;
 end;
 
@@ -238,11 +247,14 @@ begin
   Self.RZFileName := AFileName;
   if (Trim(AFileName) <> '') then
   begin
-    if Self.RZEditorType = rz_an_type_editor_text then
+    if Self.RZEditorType = rz_an_type_editortype_text then
+    begin
       Self.RZTextEditor.RZOpen(Self.RZFileName)
-    else if Self.RZEditorType = rz_an_type_editor_syntax then
-      Self.RZSynEditor.RZOpen(Self.RZFileName)
-    ;
+    end
+    else if Self.RZEditorType = rz_an_type_editortype_syntax then
+    begin
+      Self.RZSynEditor.RZOpen(Self.RZFileName);
+    end;
   end;
   Self.RZCaretPosX := 0;
   Self.RZCaretPosY := 1;
@@ -252,13 +264,13 @@ end;
 {2.4}
 procedure TRZANCustomTabSheet.RZSave (AFileName : TFileName);
 begin
-  if Self.RZEditorType = rz_an_type_editor_text then
+  if Self.RZEditorType = rz_an_type_editortype_text then
     Self.RZTextEditor.RZSave(AFileName)
-  else if Self.RZEditorType = rz_an_type_editor_syntax then
+  else if Self.RZEditorType = rz_an_type_editortype_syntax then
     Self.RZSynEditor.RZSave(AFileName)
   ;
   Self.RZStatus := rz_an_type_status_Saved;
-  Self.RZFileName := AFileName;
+  if Self.RZFileName <> AFileName then Self.RZFileName := AFileName;
 end;
 
 {2.20}
@@ -286,24 +298,8 @@ end;
 procedure TRZANCustomTabSheet.SetRZFileExt (const AValue : string);
 begin
   Self.FRZFileExt := AValue;
-  if Self.RZFileExt = '.java' then
-  begin
-    Self.RZLanguage := rz_an_type_lang_Java;
-    Self.RZEditorType := rz_an_type_editor_syntax;
-  end
-  else if Self.RZFileExt = '.pas' then
-  begin
-    Self.RZLanguage := rz_an_type_lang_Pascal;
-    Self.RZEditorType := rz_an_type_editor_syntax;
-  end
-  else if Self.RZFileExt = '.py' then
-  begin
-    Self.RZLanguage := rz_an_type_lang_Python;
-    Self.RZEditorType := rz_an_type_editor_syntax;
-  end
-  else
-    Self.RZEditorType := rz_an_type_editor_text
-  ;
+  Self.RZEditorFormat := VRZANVar.GetRZEditorFormat(Self.FRZFileExt);
+  Self.RZEditorType := VRZANVar.GetRZEditorType(Self.FRZFileExt);
 end;
 
 {3. Text Editing}
@@ -311,8 +307,8 @@ end;
 {3.1}
 procedure TRZANCustomTabSheet.RZUndo;
 begin
-  if Self.RZEditorType = rz_an_type_editor_text then Self.RZTextEditor.RZUndo
-    else if Self.RZEditorType = rz_an_type_editor_syntax then Self.RZSynEditor.RZUndo
+  if Self.RZEditorType = rz_an_type_editortype_text then Self.RZTextEditor.RZUndo
+    else if Self.RZEditorType = rz_an_type_editortype_syntax then Self.RZSynEditor.RZUndo
   ;
   Self.RZStatus := rz_an_type_status_Modified;
 end;
@@ -320,8 +316,8 @@ end;
 {3.2}
 procedure TRZANCustomTabSheet.RZRedo;
 begin
-  if Self.RZEditorType = rz_an_type_editor_text then Self.RZTextEditor.RZRedo
-    else if Self.RZEditorType = rz_an_type_editor_syntax then Self.RZSynEditor.RZRedo
+  if Self.RZEditorType = rz_an_type_editortype_text then Self.RZTextEditor.RZRedo
+    else if Self.RZEditorType = rz_an_type_editortype_syntax then Self.RZSynEditor.RZRedo
   ;
   Self.RZStatus := rz_an_type_status_Modified;
 end;
@@ -329,16 +325,16 @@ end;
 {3.3}
 procedure TRZANCustomTabSheet.RZCopy;
 begin
-  if Self.RZEditorType = rz_an_type_editor_text then Self.RZTextEditor.RZCopy
-    else if Self.RZEditorType = rz_an_type_editor_syntax then Self.RZSynEditor.RZCopy
+  if Self.RZEditorType = rz_an_type_editortype_text then Self.RZTextEditor.RZCopy
+    else if Self.RZEditorType = rz_an_type_editortype_syntax then Self.RZSynEditor.RZCopy
   ;
 end;
 
 {3.4}
 procedure TRZANCustomTabSheet.RZCut;
 begin
-  if Self.RZEditorType = rz_an_type_editor_text then Self.RZTextEditor.RZCut
-    else if Self.RZEditorType = rz_an_type_editor_syntax then Self.RZSynEditor.RZCut
+  if Self.RZEditorType = rz_an_type_editortype_text then Self.RZTextEditor.RZCut
+    else if Self.RZEditorType = rz_an_type_editortype_syntax then Self.RZSynEditor.RZCut
   ;
   Self.RZStatus := rz_an_type_status_Modified;
 end;
@@ -346,8 +342,8 @@ end;
 {3.5}
 procedure TRZANCustomTabSheet.RZPaste;
 begin
-  if Self.RZEditorType = rz_an_type_editor_text then Self.RZTextEditor.RZPaste
-    else if Self.RZEditorType = rz_an_type_editor_syntax then Self.RZSynEditor.RZPaste
+  if Self.RZEditorType = rz_an_type_editortype_text then Self.RZTextEditor.RZPaste
+    else if Self.RZEditorType = rz_an_type_editortype_syntax then Self.RZSynEditor.RZPaste
   ;
   Self.RZStatus := rz_an_type_status_Modified;
 end;
@@ -355,8 +351,8 @@ end;
 {3.6}
 procedure TRZANCustomTabSheet.RZSelectAll;
 begin
-  if Self.RZEditorType = rz_an_type_editor_text then Self.RZTextEditor.RZSelectAll
-    else if Self.RZEditorType = rz_an_type_editor_syntax then Self.RZSynEditor.RZSelectAll
+  if Self.RZEditorType = rz_an_type_editortype_text then Self.RZTextEditor.RZSelectAll
+    else if Self.RZEditorType = rz_an_type_editortype_syntax then Self.RZSynEditor.RZSelectAll
   ;
 end;
 
@@ -375,55 +371,73 @@ end;
 {5. Editor Format}
 
 {5.20}
-procedure TRZANCustomTabSheet.SetRZLanguage (AValue : rz_an_type_Language);
+procedure TRZANCustomTabSheet.SetRZEditorFormat (AValue : rz_an_type_EditorFormat);
 begin
-  Self.FRZLanguage := AValue;
-  if Self.RZANStatusBar <> nil then Self.RZANStatusBar.RZLanguage := Self.RZLanguage;
-end;
-
-{5.30}
-procedure TRZANCustomTabSheet.RZSetNewLanguage (ALanguage : rz_an_type_Language);
-var
-  i : Word;
-begin
-  if ALanguage = rz_an_type_lang_Text then
+  Self.FRZEditorFormat := AValue;
+  {Update Editor}
+  if Self.RZEditorFormat <> rz_an_type_editorformat_Text then
   begin
-    if Self.RZEditorType = rz_an_type_editor_syntax then
-    begin
-      Self.RZTextEditor.Lines := Self.RZSynEditor.Lines;
-      Self.RZSynEditor.Lines.Clear;
-      Self.RZEditorType := rz_an_type_editor_text;
-    end;
+    Self.RZEditorType := rz_an_type_editortype_syntax;
+    Self.RZSynEditor.RZEditorFormat := Self.RZEditorFormat;
   end
   else
   begin
-    if Self.RZEditorType = rz_an_type_editor_text then
+    Self.RZEditorType := rz_an_type_editortype_text;
+  end;
+  {Status Bar}
+  if Self.RZANStatusBar <> nil then Self.RZANStatusBar.RZEditorFormat := Self.RZEditorFormat;
+end;
+
+{5.20}
+procedure TRZANCustomTabSheet.RZChangeEditorFormat (AFormat : rz_an_type_EditorFormat);
+var
+  i,LLinesCount : Cardinal;
+  LCurrentEditorFormat : rz_an_type_EditorFormat;
+  LIsCurrentEditorFormatLanguage,LIsNextEditorFormatLanguage : Boolean;
+begin
+  LCurrentEditorFormat := Self.RZEditorFormat;
+  LIsCurrentEditorFormatLanguage := VRZANVar.IsRZEditorFormatLanguage(LCurrentEditorFormat);
+  LIsNextEditorFormatLanguage := VRZANVar.IsRZEditorFormatLanguage(AFormat);
+  {Check Lines Count}
+  if not(LIsCurrentEditorFormatLanguage) then
+    LLinesCount := Self.RZTextEditor.Lines.Count
+  else if LIsCurrentEditorFormatLanguage then
+    LLinesCount := Self.RZSynEditor.Lines.Count
+  ;
+  {Copy Content}
+  if LLinesCount >= 1 then
+  begin
+    if LIsCurrentEditorFormatLanguage then
+    begin
+      if not(LIsNextEditorFormatLanguage) then
+      begin
+        Self.RZTextEditor.Lines := Self.RZSynEditor.Lines;
+        Self.RZSynEditor.Lines.Clear;
+      end;
+    end
+    else
+    if not(LIsCurrentEditorFormatLanguage) then
     begin
       for i := 0 to Self.RZTextEditor.Lines.Count - 1 do
         Self.RZSynEditor.Lines.Add(Self.RZTextEditor.Lines[i])
       ;
       Self.RZTextEditor.Lines.Clear;
-      Self.RZEditorType := rz_an_type_editor_syntax;
-      Self.RZSynEditor.RZLanguage := ALanguage;
-    end
-    else if Self.RZEditorType = rz_an_type_editor_syntax then
-    begin
-      Self.RZSynEditor.RZLanguage := ALanguage;
     end;
   end;
-  Self.RZLanguage := ALanguage;
+  {Update Variable}
+  Self.RZEditorFormat := AFormat;
 end;
 
 {5.30}
-procedure TRZANCustomTabSheet.SetRZEditorType (AValue : rz_an_type_Editor);
+procedure TRZANCustomTabSheet.SetRZEditorType (AValue : rz_an_type_EditorType);
 begin
   Self.FRZEditorType := AValue;
-  if Self.RZEditorType = rz_an_type_editor_text then
+  if Self.RZEditorType = rz_an_type_editortype_text then
   begin
     Self.RZTextEditor.Visible := True;
     Self.RZSynEditor.Visible := False;
   end
-  else if Self.RZEditorType = rz_an_type_editor_syntax then
+  else if Self.RZEditorType = rz_an_type_editortype_syntax then
   begin
     Self.RZSynEditor.Visible := True;
     Self.RZTextEditor.Visible := False;
@@ -433,22 +447,11 @@ end;
 {6. Editor Style}
 
 {6.0}
-procedure TRZANCustomTabSheet.RZSetNewStyle (AStyle : rz_an_type_Style);
+procedure TRZANCustomTabSheet.SetRZEditorStyle (AValue : rz_an_type_Style);
 begin
-  if AStyle = rz_an_type_style_Normal then
-  begin
-    Self.RZTextEditor.Color := clWhite;
-    Self.RZTextEditor.Font.Color := clBlack;
-    Self.RZSynEditor.Color := clWhite;
-    Self.RZSynEditor.Font.Color := clBlack;
-  end
-  else if AStyle = rz_an_type_style_Dark then
-  begin
-    Self.RZTextEditor.Color := clBlack;
-    Self.RZTextEditor.Font.Color := clWhite;
-    Self.RZSynEditor.Color := clBlack;
-    Self.RZSynEditor.Font.Color := clWhite;
-  end;
+  Self.FRZEditorStyle := AValue;
+  Self.RZTextEditor.RZStyle := Self.FRZEditorStyle;
+  Self.RZSynEditor.RZStyle := Self.FRZEditorStyle;
 end;
 
 {7. Caret}

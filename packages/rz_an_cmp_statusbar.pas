@@ -1,29 +1,27 @@
-// This file is part of Anoa-Notepad project
-// Copyright (C)2019 Ahadi Aprianto <ahadi.aprianto@gmail.com>
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either
-// version 2 of the License, or (at your option) any later version.
-//
-// Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
-// "derivative work" for the purpose of this license if it does any of the
-// following:
-// 1. Integrates source code from Anoa-Notepad.
-// 2. Integrates/includes/aggregates Anoa-Notepad into a proprietary executable
-//    installer, such as those produced by InstallShield.
-// 3. Links to a library or executes a program that does any of the above.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+{********************************************************************************
+
+This file is part of Anoa-Notepad project.
+
+Anoa-Notepad is a free and open source text and code editor for programmers,
+software developers, software engineers, and common users.
+
+Copyright(C)2019-2020 Ahadi Aprianto (ahadi.aprianto@gmail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+
+********************************************************************************}
 
 unit rz_an_cmp_statusbar;
 
@@ -44,7 +42,7 @@ type
     {9.1.1}
     FRZStatus : Byte;
     {9.1.2}
-    FRZLanguage : Byte;
+    FRZEditorFormat : Byte;
     {9.1.3}
     FRZCaret : Byte;
     {9.1.4}
@@ -53,7 +51,7 @@ type
     {9.1.1}
     property RZStatus : Byte read FRZStatus write FRZStatus;
     {9.1.2}
-    property RZLanguage : Byte read FRZLanguage write FRZLanguage;
+    property RZEditorFormat : Byte read FRZEditorFormat write FRZEditorFormat;
     {9.1.3}
     property RZCaret : Byte read FRZCaret write FRZCaret;
     {9.1.4}
@@ -71,7 +69,7 @@ type
     {9.1.1}
     FRZStatus : rz_an_type_Status;
     {9.1.2}
-    FRZLanguage : rz_an_type_Language;
+    FRZEditorFormat : rz_an_type_EditorFormat;
     {9.1.3}
     FRZCaretPosX : Integer;
     FRZCaretPosY : Integer;
@@ -85,7 +83,7 @@ type
     {9.1.1}
     procedure SetRZStatus (const AValue: rz_an_type_Status);
     {9.1.2}
-    procedure SetRZLanguage (const AValue: rz_an_type_Language);
+    procedure SetRZEditorFormat (const AValue: rz_an_type_EditorFormat);
     {9.1.3}
     procedure SetRZCaretPosX (const AValue: Integer);
     procedure SetRZCaretPosY (const AValue: Integer);
@@ -96,7 +94,7 @@ type
     {9.1.1}
     property RZStatus : rz_an_type_Status read FRZStatus write SetRZStatus;
     {9.1.2}
-    property RZLanguage : rz_an_type_Language read FRZLanguage write SetRZLanguage;
+    property RZEditorFormat : rz_an_type_EditorFormat read FRZEditorFormat write SetRZEditorFormat;
     {9.1.3}
     property RZCaretPosX : Integer read FRZCaretPosX write SetRZCaretPosX;
     property RZCaretPosY : Integer read FRZCaretPosY write SetRZCaretPosY;
@@ -116,7 +114,7 @@ type
     {9.1.1}
     property RZStatus;
     {9.1.2}
-    property RZLanguage;
+    property RZEditorFormat;
     {9.1.3}
     property RZCaretPosX;
     property RZCaretPosY;
@@ -135,7 +133,7 @@ begin
   {9.1.1}
   Self.RZStatus := 0;
   {9.1.2}
-  Self.RZLanguage := 1;
+  Self.RZEditorFormat := 1;
   {9.1.3}
   Self.RZCaret := 2;
   {9.1.4}
@@ -169,13 +167,21 @@ begin
 end;
 
 {9.1.2}
-procedure TRZANCustomStatusBar.SetRZLanguage (const AValue : rz_an_type_Language);
+procedure TRZANCustomStatusBar.SetRZEditorFormat (const AValue : rz_an_type_EditorFormat);
 begin
-  Self.FRZLanguage := AValue;
-  if Self.RZLanguage = rz_an_type_lang_Java then Self.Panels[Self.RZIndex.RZLanguage].Text := 'Java'
-    else if Self.RZLanguage = rz_an_type_lang_Pascal then Self.Panels[Self.RZIndex.RZLanguage].Text := 'Pascal'
-    else if Self.RZLanguage = rz_an_type_lang_Python then Self.Panels[Self.RZIndex.RZLanguage].Text := 'Python'
-    else if Self.RZLanguage = rz_an_type_lang_Text then Self.Panels[Self.RZIndex.RZLanguage].Text := 'Text'
+  Self.FRZEditorFormat := AValue;
+  if Self.RZEditorFormat = rz_an_type_editorformat_Basic then Self.Panels[Self.RZIndex.RZEditorFormat].Text := 'Basic'
+    else if Self.RZEditorFormat = rz_an_type_editorformat_Cpp then Self.Panels[Self.RZIndex.RZEditorFormat].Text := 'C++'
+    else if Self.RZEditorFormat = rz_an_type_editorformat_CSS then Self.Panels[Self.RZIndex.RZEditorFormat].Text := 'CSS'
+    else if Self.RZEditorFormat = rz_an_type_editorformat_HTML then Self.Panels[Self.RZIndex.RZEditorFormat].Text := 'HTML'
+    else if Self.RZEditorFormat = rz_an_type_editorformat_Java then Self.Panels[Self.RZIndex.RZEditorFormat].Text := 'Java'
+    else if Self.RZEditorFormat = rz_an_type_editorformat_Javascript then Self.Panels[Self.RZIndex.RZEditorFormat].Text := 'Javascript'
+    else if Self.RZEditorFormat = rz_an_type_editorformat_PHP then Self.Panels[Self.RZIndex.RZEditorFormat].Text := 'PHP'
+    else if Self.RZEditorFormat = rz_an_type_editorformat_Pascal then Self.Panels[Self.RZIndex.RZEditorFormat].Text := 'Pascal'
+    else if Self.RZEditorFormat = rz_an_type_editorformat_Python then Self.Panels[Self.RZIndex.RZEditorFormat].Text := 'Python'
+    else if Self.RZEditorFormat = rz_an_type_editorformat_SQL then Self.Panels[Self.RZIndex.RZEditorFormat].Text := 'SQL'
+    else if Self.RZEditorFormat = rz_an_type_editorformat_XML then Self.Panels[Self.RZIndex.RZEditorFormat].Text := 'XML'
+    else if Self.RZEditorFormat = rz_an_type_editorformat_Text then Self.Panels[Self.RZIndex.RZEditorFormat].Text := 'Text'
   ;
 end;
 

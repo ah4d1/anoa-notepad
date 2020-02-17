@@ -11,7 +11,7 @@
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="9">
+    <Files Count="10">
       <Item1>
         <Filename Value="rz_anoa_notepad.pas"/>
         <HasRegisterProc Value="True"/>
@@ -49,6 +49,10 @@
         <Filename Value="rz_an_cmp_synedit.pas"/>
         <UnitName Value="rz_an_cmp_synedit"/>
       </Item9>
+      <Item10>
+        <Filename Value="rz_an_pas_tools.pas"/>
+        <UnitName Value="rz_an_pas_tools"/>
+      </Item10>
     </Files>
     <RequiredPkgs Count="4">
       <Item1>

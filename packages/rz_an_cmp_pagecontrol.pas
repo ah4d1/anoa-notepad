@@ -1,29 +1,27 @@
-// This file is part of Anoa-Notepad project
-// Copyright (C)2019 Ahadi Aprianto <ahadi.aprianto@gmail.com>
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either
-// version 2 of the License, or (at your option) any later version.
-//
-// Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
-// "derivative work" for the purpose of this license if it does any of the
-// following:
-// 1. Integrates source code from Anoa-Notepad.
-// 2. Integrates/includes/aggregates Anoa-Notepad into a proprietary executable
-//    installer, such as those produced by InstallShield.
-// 3. Links to a library or executes a program that does any of the above.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+{********************************************************************************
+
+This file is part of Anoa-Notepad project.
+
+Anoa-Notepad is a free and open source text and code editor for programmers,
+software developers, software engineers, and common users.
+
+Copyright(C)2019-2020 Ahadi Aprianto (ahadi.aprianto@gmail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+
+********************************************************************************}
 
 unit rz_an_cmp_pagecontrol;
 
@@ -32,15 +30,16 @@ unit rz_an_cmp_pagecontrol;
 interface
 
 uses
-  Classes, SysUtils, ComCtrls, Controls, Dialogs, Graphics, Forms, rz_an_cmp_statusbar,
-  rz_an_cmp_opendialog, rz_an_cmp_savedialog, rz_an_pas_var, rz_an_cmp_tabsheet,
-  rz_an_cmp_richmemo, rz_an_cmp_synedit;
+  Classes, SysUtils, ComCtrls, Controls, Dialogs, Graphics, Forms, Menus, RichMemo,
+  SynEdit, rz_an_cmp_statusbar, rz_an_cmp_opendialog, rz_an_cmp_savedialog, rz_an_pas_var,
+  rz_an_cmp_tabsheet, rz_an_cmp_richmemo, rz_an_cmp_synedit;
 
 type
 
   TRZANCustomPageControl = class(TPageControl)
   private
     {1. Application}
+    FRZPopupMenu : TPopupMenu;
     {1.1.5}
     FRZStatusBar : TRZANStatusBar;
     {2. File Operation}
@@ -55,6 +54,7 @@ type
     {2.6}
     function GetRZActiveTabSheet : TRZANTabSheet;
     {1. Application}
+    property RZPopupMenu : TPopupMenu read FRZPopupMenu write FRZPopupMenu;
     property RZANStatusBar : TRZANStatusBar read FRZStatusBar write FRZStatusBar;
     {2. File Operation}
     {2.20}
@@ -83,6 +83,8 @@ type
     {2.4}
     procedure RZSaveFile;
     procedure RZSaveAsFile;
+    {2.5}
+    procedure RZPrint (APrintParameters: TPrintParams);
     {2.7}
     procedure Change; override;
     {3. Text Editing}
@@ -100,15 +102,19 @@ type
     procedure RZSelectAll;
     {5. Editor Format}
     {5.20}
-    procedure RZSetNewLanguage (ALanguage : rz_an_type_Language);
+    procedure RZSetNewEditorFormat (AEditorFormat : rz_an_type_EditorFormat);
     {6. Editor Style}
     {6.0}
     procedure RZSetNewStyle (AStyle : rz_an_type_Style);
+    {*}
+    function RZSpecialCharactersShow : Boolean;
+    function RZSpecialCharactersHide : Boolean;
   end;
 
   TRZANPageControl = class(TRZANCustomPageControl)
   published
     {1. Application}
+    property RZPopupMenu;
     {1.1.5}
     property RZANStatusBar;
   end;
@@ -150,6 +156,7 @@ begin
   begin
     Parent := Self;
     RZTabId := Self.RZTabId;
+    RZPopupMenu := Self.RZPopupMenu;
     RZANStatusBar := Self.RZANStatusBar;
     RZOpen(AFileName);
     Show;
@@ -171,7 +178,7 @@ end;
 {2.3}
 procedure TRZANCustomPageControl.RZOpenFile;
 begin
-  Self.RZANOpenDialog.FilterIndex := Ord(Self.RZActiveTabSheet.RZLanguage) + 1; // Filter Index begin at 1
+  Self.RZANOpenDialog.FilterIndex := Ord(Self.RZActiveTabSheet.RZEditorFormat) + 1; // Filter Index begin at 1
   if Self.RZANOpenDialog.Execute then
   begin
     if Self.RZTabInit then
@@ -186,7 +193,7 @@ end;
 {2.4}
 procedure TRZANCustomPageControl.RZSaveFile;
 begin
-  Self.RZANSaveDialog.FilterIndex := Ord(Self.RZActiveTabSheet.RZLanguage) + 1; // Filter Index begin at 1
+  Self.RZANSaveDialog.FilterIndex := Ord(Self.RZActiveTabSheet.RZEditorFormat) + 1; // Filter Index begin at 1
   if Trim(Self.RZActiveTabSheet.RZFileName) <> '' then
     Self.RZActiveTabSheet.RZSave(Self.RZActiveTabSheet.RZFileName)
   else
@@ -201,11 +208,21 @@ end;
 {2.4}
 procedure TRZANCustomPageControl.RZSaveAsFile;
 begin
-  Self.RZANSaveDialog.FilterIndex := Ord(Self.RZActiveTabSheet .RZLanguage) + 1; // Filter Index begin at 1
+  Self.RZANSaveDialog.FilterIndex := Ord(Self.RZActiveTabSheet.RZEditorFormat) + 1; // Filter Index begin at 1
   if Self.RZANSaveDialog.Execute then
   begin
     Self.RZActiveTabSheet.RZSave(Self.RZANSaveDialog.FileName);
   end;
+end;
+
+{2.5}
+procedure TRZANCustomPageControl.RZPrint (APrintParameters: TPrintParams);
+begin
+  if Self.RZActiveTabSheet.RZEditorType = rz_an_type_editortype_text then
+    Self.RZActiveTabSheet.RZTextEditor.Print(APrintParameters)
+  else
+    MessageDlg('Information','Change Editor Format to Text then Print',mtInformation,[mbOK],0)
+  ;
 end;
 
 {2.6}
@@ -218,18 +235,18 @@ end;
 {2.7}
 procedure TRZANCustomPageControl.Change;
 begin
-  if Self.RZActiveTabSheet.RZEditorType = rz_an_type_editor_text then
+  if Self.RZActiveTabSheet.RZEditorType = rz_an_type_editortype_text then
   begin
     Self.RZActiveTabSheet.RZANStatusBar.RZStatus := Self.RZActiveTabSheet.RZStatus;
-    Self.RZActiveTabSheet.RZANStatusBar.RZLanguage := Self.RZActiveTabSheet.RZLanguage;
+    Self.RZActiveTabSheet.RZANStatusBar.RZEditorFormat := Self.RZActiveTabSheet.RZEditorFormat;
     Self.RZActiveTabSheet.RZANStatusBar.RZCaretPosX := Self.RZActiveTabSheet.RZTextEditor.RZCaretPosX;
     Self.RZActiveTabSheet.RZANStatusBar.RZCaretPosY := Self.RZActiveTabSheet.RZTextEditor.RZCaretPosY;
     Self.RZActiveTabSheet.RZANStatusBar.RZFileName := Self.RZActiveTabSheet.RZFileName;
   end
-  else if Self.RZActiveTabSheet.RZEditorType = rz_an_type_editor_syntax then
+  else if Self.RZActiveTabSheet.RZEditorType = rz_an_type_editortype_syntax then
   begin
     Self.RZActiveTabSheet.RZANStatusBar.RZStatus := Self.RZActiveTabSheet.RZStatus;
-    Self.RZActiveTabSheet.RZANStatusBar.RZLanguage := Self.RZActiveTabSheet.RZLanguage;
+    Self.RZActiveTabSheet.RZANStatusBar.RZEditorFormat := Self.RZActiveTabSheet.RZEditorFormat;
     Self.RZActiveTabSheet.RZANStatusBar.RZCaretPosX := Self.RZActiveTabSheet.RZSynEditor.RZCaretPosX;
     Self.RZActiveTabSheet.RZANStatusBar.RZCaretPosY := Self.RZActiveTabSheet.RZSynEditor.RZCaretPosY;
     Self.RZActiveTabSheet.RZANStatusBar.RZFileName := Self.RZActiveTabSheet.RZFileName;
@@ -278,9 +295,9 @@ end;
 {5. Editor Format}
 
 {5.20}
-procedure TRZANCustomPageControl.RZSetNewLanguage (ALanguage : rz_an_type_Language);
+procedure TRZANCustomPageControl.RZSetNewEditorFormat (AEditorFormat : rz_an_type_EditorFormat);
 begin
-  Self.RZActiveTabSheet.RZSetNewLanguage(ALanguage);
+  Self.RZActiveTabSheet.RZChangeEditorFormat(AEditorFormat);
 end;
 
 {6. Editor Style}
@@ -288,8 +305,43 @@ end;
 {6.0}
 procedure TRZANCustomPageControl.RZSetNewStyle (AStyle : rz_an_type_Style);
 begin
-  Self.RZActiveTabSheet.RZSetNewStyle(AStyle);
+  Self.RZActiveTabSheet.RZEditorStyle := AStyle;
 end;
+
+{*}
+
+function TRZANCustomPageControl.RZSpecialCharactersShow : Boolean;
+begin
+  if Self.RZActiveTabSheet.RZEditorType = rz_an_type_editortype_syntax then
+  begin
+    Self.RZActiveTabSheet.RZSynEditor.Options := Self.RZActiveTabSheet.RZSynEditor.Options
+      + [eoShowSpecialChars];
+    Result := True;
+  end
+  else
+  begin
+    MessageDlg('Ooops!!','Sorry, this function is not available for "Text" Editor Format',
+      mtInformation,[mbOK],0);
+    Result := False;
+  end;
+end;
+
+function TRZANCustomPageControl.RZSpecialCharactersHide : Boolean;
+begin
+  if Self.RZActiveTabSheet.RZEditorType = rz_an_type_editortype_syntax then
+  begin
+    Self.RZActiveTabSheet.RZSynEditor.Options := Self.RZActiveTabSheet.RZSynEditor.Options
+      - [eoShowSpecialChars];
+    Result := True;
+  end
+  else
+  begin
+    MessageDlg('Ooops!!','Sorry, this function is not available for "Text" Editor Format',
+      mtInformation,[mbOK],0);
+    Result := False;
+  end;
+end;
+
 
 end.
 

@@ -1,29 +1,27 @@
-// This file is part of Anoa-Notepad project
-// Copyright (C)2019 Ahadi Aprianto <ahadi.aprianto@gmail.com>
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either
-// version 2 of the License, or (at your option) any later version.
-//
-// Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
-// "derivative work" for the purpose of this license if it does any of the
-// following:
-// 1. Integrates source code from Anoa-Notepad.
-// 2. Integrates/includes/aggregates Anoa-Notepad into a proprietary executable
-//    installer, such as those produced by InstallShield.
-// 3. Links to a library or executes a program that does any of the above.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+{********************************************************************************
+
+This file is part of Anoa-Notepad project.
+
+Anoa-Notepad is a free and open source text and code editor for programmers,
+software developers, software engineers, and common users.
+
+Copyright(C)2019-2020 Ahadi Aprianto (ahadi.aprianto@gmail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+
+********************************************************************************}
 
 unit rz_an_cmp_richmemo;
 
@@ -42,15 +40,24 @@ type
     {3. Text Editing}
     {3.90}
     FRZClipboard : TClipboard;
+    {6. Editor Style}
+    {6.0}
+    FRZStyle : rz_an_type_Style;
     {7. Caret}
     {7.1}
     FRZCaretPosX : Integer;
     {7.2}
     FRZCaretPosY : Integer;
   protected
+    {6. Editor Style}
+    {6.0}
+    procedure SetRZStyle (AValue : rz_an_type_Style);
     {3. Text Editing}
     {3.90}
     property RZClipboard : TClipboard read FRZClipboard write FRZClipboard;
+    {6. Editor Style}
+    {6.0}
+    property RZStyle : rz_an_type_Style read FRZStyle write SetRZStyle;
     {7. Caret}
     {7.1}
     procedure SetRZCaretPosX (const AValue: Integer);
@@ -104,6 +111,9 @@ type
 
   TRZANRichMemo = class(TRZANCustomRichMemo)
   public
+    {6. Editor Style}
+    {6.0}
+    property RZStyle;
     {7. Caret}
     {7.1}
     property RZCaretPosX;
@@ -187,6 +197,24 @@ begin
   Self.SelectAll;
 end;
 
+{6. Editor Style}
+
+{6.0}
+procedure TRZANCustomRichMemo.SetRZStyle (AValue : rz_an_type_Style);
+begin
+  Self.FRZStyle := AValue;
+  if Self.FRZStyle = rz_an_type_style_Normal then
+  begin
+    Self.Color := clWhite;
+    Self.Font.Color := clBlack;
+  end
+  else if Self.FRZStyle = rz_an_type_style_Dark then
+  begin
+    Self.Color := clBlack;
+    Self.Font.Color := clWhite;
+  end;
+end;
+
 {7. Caret}
 
 {7.1}
@@ -216,6 +244,7 @@ end;
 {8.2}
 procedure TRZANCustomRichMemo.DoEnter;
 begin
+  Self.PopupMenu := (Self.Parent as TRZANTabSheet).RZPopupMenu;
   Self.RZOnEventUpdate;
   inherited;
 end;
@@ -249,6 +278,7 @@ end;
 {8.6}
 procedure TRZANCustomRichMemo.MouseDown (Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
+  Self.PopupMenu := (Self.Parent as TRZANTabSheet).RZPopupMenu;
   Self.RZOnEventUpdate;
   inherited;
 end;
