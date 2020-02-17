@@ -4,13 +4,13 @@
     <PathDelim Value="\"/>
     <Version Value="11"/>
     <BuildModes Active="Default"/>
-    <Units Count="37">
+    <Units Count="44">
       <Unit0>
         <Filename Value="AnoaNotepad.lpr"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="4"/>
-        <CursorPos Y="28"/>
+        <TopLine Value="24"/>
+        <CursorPos X="54" Y="39"/>
         <UsageCount Value="203"/>
       </Unit0>
       <Unit1>
@@ -20,8 +20,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="267"/>
-        <CursorPos X="82" Y="287"/>
+        <TopLine Value="423"/>
+        <CursorPos X="48" Y="426"/>
         <UsageCount Value="203"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -33,8 +33,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="105"/>
-        <CursorPos X="3" Y="107"/>
+        <CursorPos Y="25"/>
         <UsageCount Value="200"/>
       </Unit2>
       <Unit3>
@@ -43,35 +42,38 @@
         <ComponentName Value="FormReadme"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="43" Y="15"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="57"/>
+        <CursorPos X="3" Y="72"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit3>
       <Unit4>
         <Filename Value="units\unit_pas_editor_format.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="95"/>
         <CursorPos Y="118"/>
-        <UsageCount Value="156"/>
+        <UsageCount Value="155"/>
       </Unit4>
       <Unit5>
         <Filename Value="units\unit_pas_form_main_helper.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="12"/>
         <CursorPos X="24" Y="26"/>
-        <UsageCount Value="149"/>
+        <UsageCount Value="148"/>
       </Unit5>
       <Unit6>
         <Filename Value="units\unit_pas_var.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="13" Y="12"/>
-        <UsageCount Value="144"/>
+        <UsageCount Value="143"/>
       </Unit6>
       <Unit7>
         <Filename Value="units\unit_pas_system.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="3" Y="22"/>
-        <UsageCount Value="35"/>
+        <UsageCount Value="34"/>
       </Unit7>
       <Unit8>
         <Filename Value="units\unit_form_file_open_delimiter.pas"/>
@@ -81,35 +83,35 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="42"/>
         <CursorPos X="59" Y="55"/>
-        <UsageCount Value="26"/>
+        <UsageCount Value="25"/>
       </Unit8>
       <Unit9>
         <Filename Value="units\unit_pas_script_r.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="26"/>
         <CursorPos X="14" Y="14"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="21"/>
       </Unit9>
       <Unit10>
         <Filename Value="units\unit_pas_about.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="8"/>
         <CursorPos X="49" Y="31"/>
-        <UsageCount Value="43"/>
+        <UsageCount Value="42"/>
       </Unit10>
       <Unit11>
         <Filename Value="units\unit_pas_form.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="25"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit11>
       <Unit12>
         <Filename Value="C:\cmpLaz\lazarus-ccr-svn-r7211-components-richmemo\richmemo.pas"/>
         <UnitName Value="RichMemo"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="194"/>
-        <CursorPos X="51" Y="266"/>
-        <UsageCount Value="5"/>
+        <TopLine Value="105"/>
+        <CursorPos X="3" Y="118"/>
+        <UsageCount Value="10"/>
       </Unit12>
       <Unit13>
         <Filename Value="C:\lazarus\lcl\lcltype.pp"/>
@@ -117,7 +119,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="390"/>
         <CursorPos X="3" Y="402"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit13>
       <Unit14>
         <Filename Value="C:\lazarus\lcl\comctrls.pp"/>
@@ -125,15 +127,15 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="593"/>
         <CursorPos X="46" Y="603"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="10"/>
       </Unit14>
       <Unit15>
         <Filename Value="C:\lazarus\lcl\graphics.pp"/>
         <UnitName Value="Graphics"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="97"/>
-        <CursorPos X="3" Y="109"/>
-        <UsageCount Value="4"/>
+        <TopLine Value="238"/>
+        <CursorPos X="9" Y="243"/>
+        <UsageCount Value="10"/>
       </Unit15>
       <Unit16>
         <Filename Value="units\unit_form_main.lfm"/>
@@ -143,103 +145,97 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="256"/>
         <CursorPos X="23" Y="276"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit16>
       <Unit17>
         <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_anoa_notepad.pas"/>
         <UnitName Value="RZ_Anoa_Notepad"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="23"/>
-        <CursorPos X="57" Y="35"/>
-        <UsageCount Value="4"/>
+        <CursorPos Y="25"/>
+        <UsageCount Value="10"/>
       </Unit17>
       <Unit18>
         <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_richmemo.pas"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="125"/>
-        <CursorPos X="31" Y="205"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="25"/>
         <UsageCount Value="100"/>
-        <Loaded Value="True"/>
       </Unit18>
       <Unit19>
         <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_opendialog.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="27"/>
-        <CursorPos Y="52"/>
+        <CursorPos Y="25"/>
         <UsageCount Value="15"/>
       </Unit19>
       <Unit20>
         <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_savedialog.pas"/>
         <EditorIndex Value="-1"/>
-        <CursorPos Y="43"/>
-        <UsageCount Value="1"/>
+        <CursorPos Y="25"/>
+        <UsageCount Value="10"/>
       </Unit20>
       <Unit21>
         <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_pas_var.pas"/>
-        <EditorIndex Value="6"/>
-        <TopLine Value="27"/>
-        <CursorPos X="19" Y="28"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="149"/>
+        <CursorPos Y="149"/>
         <UsageCount Value="105"/>
         <Loaded Value="True"/>
       </Unit21>
       <Unit22>
         <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_statusbar.pas"/>
-        <EditorIndex Value="5"/>
-        <TopLine Value="176"/>
-        <CursorPos X="15" Y="12"/>
-        <UsageCount Value="101"/>
-        <Loaded Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="25"/>
+        <UsageCount Value="100"/>
       </Unit22>
       <Unit23>
         <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_pas_reserved_word_container.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="7"/>
         <CursorPos X="107" Y="22"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="11"/>
       </Unit23>
       <Unit24>
         <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_pas_reserved_word.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="5"/>
         <CursorPos X="48" Y="13"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
       </Unit24>
       <Unit25>
         <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_pas_tools.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="41"/>
-        <CursorPos X="65" Y="47"/>
-        <UsageCount Value="6"/>
+        <TopLine Value="2"/>
+        <CursorPos X="64" Y="12"/>
+        <UsageCount Value="15"/>
       </Unit25>
       <Unit26>
         <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_pas_language.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="120"/>
         <CursorPos X="47" Y="14"/>
-        <UsageCount Value="18"/>
+        <UsageCount Value="17"/>
       </Unit26>
       <Unit27>
         <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_pagecontrol.pas"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="136"/>
-        <CursorPos X="5" Y="160"/>
+        <TopLine Value="278"/>
+        <CursorPos X="25" Y="300"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
       </Unit27>
       <Unit28>
         <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_tabsheet.pas"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="234"/>
-        <CursorPos X="42" Y="251"/>
-        <UsageCount Value="105"/>
+        <TopLine Value="404"/>
+        <CursorPos X="19" Y="427"/>
+        <UsageCount Value="104"/>
         <Loaded Value="True"/>
       </Unit28>
       <Unit29>
         <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_anoa_notepad_package.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="46" Y="14"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit29>
       <Unit30>
         <Filename Value="C:\lazarus\lcl\extctrls.pp"/>
@@ -247,7 +243,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="1079"/>
         <CursorPos X="3" Y="1091"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit30>
       <Unit31>
         <Filename Value="C:\lazarus\lcl\grids.pas"/>
@@ -255,14 +251,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="325"/>
         <CursorPos X="14" Y="1392"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit31>
       <Unit32>
         <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_linenumber.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="35"/>
         <CursorPos X="30" Y="47"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="24"/>
       </Unit32>
       <Unit33>
         <Filename Value="C:\lazarus\lcl\forms.pp"/>
@@ -270,15 +266,13 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="404"/>
         <CursorPos X="3" Y="416"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="10"/>
       </Unit33>
       <Unit34>
         <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_synedit.pas"/>
-        <EditorIndex Value="4"/>
-        <TopLine Value="236"/>
-        <CursorPos Y="245"/>
-        <UsageCount Value="59"/>
-        <Loaded Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="25"/>
+        <UsageCount Value="69"/>
       </Unit34>
       <Unit35>
         <Filename Value="C:\lazarus\components\synedit\synedit.pp"/>
@@ -286,132 +280,188 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="1056"/>
         <CursorPos X="3" Y="468"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit35>
       <Unit36>
         <Filename Value="C:\Users\ahadi.aprianto\AppData\Local\Temp\Temp1_AnoaNotepad.v.1.9.0.0-D.zip\AnoaNotepad\_sample\unit_pas_about.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="22"/>
         <CursorPos Y="46"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="1"/>
       </Unit36>
+      <Unit37>
+        <Filename Value="_branches\SynEdit\unit1.pas"/>
+        <UnitName Value="Unit1"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="59" Y="10"/>
+        <UsageCount Value="9"/>
+      </Unit37>
+      <Unit38>
+        <Filename Value="C:\lazarus\lcl\menus.pp"/>
+        <UnitName Value="Menus"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="399"/>
+        <CursorPos X="3" Y="411"/>
+        <UsageCount Value="9"/>
+      </Unit38>
+      <Unit39>
+        <Filename Value="C:\lazarus\lcl\controls.pp"/>
+        <UnitName Value="Controls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="175"/>
+        <CursorPos X="3" Y="187"/>
+        <UsageCount Value="9"/>
+      </Unit39>
+      <Unit40>
+        <Filename Value="C:\lazarus\components\synedit\synhighlighterjava.pas"/>
+        <UnitName Value="SynHighlighterJava"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="65"/>
+        <CursorPos X="3" Y="77"/>
+        <UsageCount Value="10"/>
+      </Unit40>
+      <Unit41>
+        <Filename Value="C:\lazarus\components\synedit\synhighlighterpython.pas"/>
+        <UnitName Value="SynHighlighterPython"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="72"/>
+        <CursorPos X="16" Y="73"/>
+        <UsageCount Value="10"/>
+      </Unit41>
+      <Unit42>
+        <Filename Value="C:\lazarus\components\synedit\synedithighlighter.pp"/>
+        <UnitName Value="SynEditHighlighter"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="424"/>
+        <CursorPos X="3" Y="315"/>
+        <UsageCount Value="10"/>
+      </Unit42>
+      <Unit43>
+        <Filename Value="C:\lazarus\components\printers\printersdlgs.pp"/>
+        <UnitName Value="PrintersDlgs"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="92"/>
+        <CursorPos X="3" Y="104"/>
+        <UsageCount Value="10"/>
+      </Unit43>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_pagecontrol.pas"/>
-        <Caret Line="234" TopLine="219"/>
+        <Caret Line="330" TopLine="314"/>
       </Position1>
       <Position2>
-        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_tabsheet.pas"/>
-        <Caret Line="183" Column="18" TopLine="169"/>
+        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_pagecontrol.pas"/>
+        <Caret Line="336" Column="9" TopLine="313"/>
       </Position2>
       <Position3>
-        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_tabsheet.pas"/>
+        <Filename Value="units\unit_form_main.pas"/>
+        <Caret Line="539" Column="51" TopLine="516"/>
       </Position3>
       <Position4>
-        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_pagecontrol.pas"/>
-        <Caret Line="84" Column="5" TopLine="69"/>
+        <Filename Value="units\unit_form_main.pas"/>
+        <Caret Line="534" Column="52" TopLine="516"/>
       </Position4>
       <Position5>
         <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_pagecontrol.pas"/>
-        <Caret Line="47" TopLine="47"/>
+        <Caret Line="313" Column="66" TopLine="311"/>
       </Position5>
       <Position6>
-        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_pagecontrol.pas"/>
-        <Caret Line="86" TopLine="73"/>
+        <Filename Value="units\unit_form_main.pas"/>
+        <Caret Line="547" TopLine="525"/>
       </Position6>
       <Position7>
-        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_pagecontrol.pas"/>
-        <Caret Line="123" TopLine="111"/>
+        <Filename Value="units\unit_form_main.pas"/>
+        <Caret Line="537" Column="42" TopLine="525"/>
       </Position7>
       <Position8>
         <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_pagecontrol.pas"/>
-        <Caret Line="365" TopLine="342"/>
+        <Caret Line="322" Column="25" TopLine="315"/>
       </Position8>
       <Position9>
         <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_pagecontrol.pas"/>
-        <Caret Line="69" TopLine="59"/>
       </Position9>
       <Position10>
         <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_pagecontrol.pas"/>
-        <Caret Line="72" Column="44" TopLine="59"/>
+        <Caret Line="105" Column="35" TopLine="86"/>
       </Position10>
       <Position11>
-        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_pagecontrol.pas"/>
-        <Caret Line="297" TopLine="284"/>
+        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_tabsheet.pas"/>
+        <Caret Line="14" Column="22"/>
       </Position11>
       <Position12>
-        <Filename Value="units\unit_form_main.pas"/>
-        <Caret Line="396" Column="26" TopLine="384"/>
+        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_tabsheet.pas"/>
       </Position12>
       <Position13>
-        <Filename Value="units\unit_form_main.pas"/>
+        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_tabsheet.pas"/>
+        <Caret Line="152" Column="35" TopLine="133"/>
       </Position13>
       <Position14>
-        <Filename Value="units\unit_form_main.pas"/>
-        <Caret Line="287" Column="82" TopLine="267"/>
+        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_pas_var.pas"/>
+        <Caret Line="55" TopLine="45"/>
       </Position14>
       <Position15>
-        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_pagecontrol.pas"/>
-        <Caret Line="104" Column="54" TopLine="93"/>
+        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_pas_var.pas"/>
+        <Caret Line="54" Column="26" TopLine="42"/>
       </Position15>
       <Position16>
-        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_pagecontrol.pas"/>
-        <Caret Line="270" Column="6" TopLine="267"/>
+        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_pas_var.pas"/>
+        <Caret Line="38" Column="26" TopLine="37"/>
       </Position16>
       <Position17>
-        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_pagecontrol.pas"/>
+        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_tabsheet.pas"/>
+        <Caret Line="402" Column="68" TopLine="390"/>
       </Position17>
       <Position18>
-        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_pagecontrol.pas"/>
-        <Caret Line="286" Column="5" TopLine="266"/>
+        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_pas_var.pas"/>
+        <Caret Line="179" TopLine="161"/>
       </Position18>
       <Position19>
-        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_tabsheet.pas"/>
-        <Caret Line="36" Column="29" TopLine="27"/>
+        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_pas_var.pas"/>
+        <Caret Line="193" Column="21" TopLine="172"/>
       </Position19>
       <Position20>
-        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_tabsheet.pas"/>
-        <Caret Line="59" Column="10" TopLine="39"/>
+        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_pas_var.pas"/>
+        <Caret Line="185" TopLine="175"/>
       </Position20>
       <Position21>
-        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_pagecontrol.pas"/>
-        <Caret Line="102" Column="9" TopLine="93"/>
+        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_pas_var.pas"/>
+        <Caret Line="195" Column="88" TopLine="183"/>
       </Position21>
       <Position22>
-        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_richmemo.pas"/>
-        <Caret Line="212" Column="72" TopLine="201"/>
+        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_tabsheet.pas"/>
+        <Caret Line="321" Column="28" TopLine="310"/>
       </Position22>
       <Position23>
-        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_richmemo.pas"/>
-        <Caret Line="213" Column="33" TopLine="200"/>
+        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_tabsheet.pas"/>
       </Position23>
       <Position24>
-        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_pagecontrol.pas"/>
-        <Caret Line="171" Column="23" TopLine="162"/>
+        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_tabsheet.pas"/>
+        <Caret Line="152" Column="35" TopLine="133"/>
       </Position24>
       <Position25>
-        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_pagecontrol.pas"/>
+        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_pas_var.pas"/>
+        <Caret Line="188" Column="62" TopLine="174"/>
       </Position25>
       <Position26>
-        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_pagecontrol.pas"/>
-        <Caret Line="76" Column="9" TopLine="56"/>
+        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_pas_var.pas"/>
+        <Caret Line="186" Column="63" TopLine="176"/>
       </Position26>
       <Position27>
-        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_tabsheet.pas"/>
-        <Caret Line="211" TopLine="234"/>
+        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_pas_var.pas"/>
+        <Caret Line="189" Column="44" TopLine="176"/>
       </Position27>
       <Position28>
-        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_tabsheet.pas"/>
-        <Caret Line="50" Column="9" TopLine="37"/>
+        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_pas_var.pas"/>
+        <Caret Line="191" TopLine="177"/>
       </Position28>
       <Position29>
         <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_tabsheet.pas"/>
-        <Caret Line="124" Column="10" TopLine="104"/>
+        <Caret Line="404" Column="21" TopLine="396"/>
       </Position29>
       <Position30>
-        <Filename Value="C:\cmpLaz\rz_anoa_notepad\rz_an_cmp_tabsheet.pas"/>
-        <Caret Line="243" Column="24" TopLine="234"/>
+        <Filename Value="units\unit_form_readme.pas"/>
+        <Caret Line="25"/>
       </Position30>
     </JumpHistory>
     <RunParams>
