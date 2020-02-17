@@ -3,7 +3,7 @@ object FormMain: TFormMain
   Height = 711
   Top = 117
   Width = 1023
-  Caption = 'Anoa-Notepad - v.1.9.0.11-RC'
+  Caption = 'Anoa-Notepad - v.1.10-R'
   ClientHeight = 681
   ClientWidth = 1023
   DesignTimePPI = 144
@@ -49,6 +49,7 @@ object FormMain: TFormMain
     ImagesWidth = 24
     PopupMenu = PopupMenuPageControl
     TabOrder = 1
+    RZPopupMenu = PopupMenuEditor
     RZANStatusBar = RZANStatusBarMain
   end
   object PanelToolBarAndCloseTab: TPanel
@@ -307,27 +308,74 @@ object FormMain: TFormMain
         ImageIndex = 3
         OnClick = MenuItemSettingsFontClick
       end
-      object MenuItemSettingsLanguage: TMenuItem
-        Caption = '&Language'
-        object MenuItemSettingsLanguageText: TMenuItem
+      object MenuItemSettingsSpecialCharacters: TMenuItem
+        Caption = 'Special Characters'
+        object MenuItemSettingsSpecialCharactersShow: TMenuItem
+          Caption = 'Show'
+          OnClick = MenuItemSettingsSpecialCharactersShowClick
+        end
+        object MenuItemSettingsSpecialCharactersHide: TMenuItem
+          Caption = 'Hide'
+          Checked = True
+          OnClick = MenuItemSettingsSpecialCharactersHideClick
+        end
+      end
+      object MenuItemSettingsEditorFormat: TMenuItem
+        Caption = 'Editor Format'
+        object MenuItemSettingsEditorFormatText: TMenuItem
           Caption = 'Text'
-          OnClick = MenuItemSettingsLanguageTextClick
+          OnClick = MenuItemSettingsEditorFormatTextClick
         end
-        object MenuItemSettingsLanguageJava: TMenuItem
+        object MenuItem1: TMenuItem
+          Caption = '-'
+        end
+        object MenuItemSettingsEditorFormatBasic: TMenuItem
+          Caption = 'Basic'
+          OnClick = MenuItemSettingsEditorFormatBasicClick
+        end
+        object MenuItemSettingsEditorFormatCpp: TMenuItem
+          Caption = 'C++'
+          OnClick = MenuItemSettingsEditorFormatCppClick
+        end
+        object MenuItemSettingsEditorFormatCSS: TMenuItem
+          Caption = 'CSS'
+          OnClick = MenuItemSettingsEditorFormatCSSClick
+        end
+        object MenuItemSettingsEditorFormatHTML: TMenuItem
+          Caption = 'HTML'
+          OnClick = MenuItemSettingsEditorFormatHTMLClick
+        end
+        object MenuItemSettingsEditorFormatJava: TMenuItem
           Caption = 'Java'
-          OnClick = MenuItemSettingsLanguageJavaClick
+          OnClick = MenuItemSettingsEditorFormatJavaClick
         end
-        object MenuItemSettingsLanguagePascal: TMenuItem
+        object MenuItemSettingsEditorFormatJavascript: TMenuItem
+          Caption = 'Javascript'
+          OnClick = MenuItemSettingsEditorFormatJavascriptClick
+        end
+        object MenuItemSettingsEditorFormatPascal: TMenuItem
           Caption = 'Pascal'
-          OnClick = MenuItemSettingsLanguagePascalClick
+          OnClick = MenuItemSettingsEditorFormatPascalClick
         end
-        object MenuItemSettingsLanguagePython: TMenuItem
+        object MenuItemSettingsEditorFormatPHP: TMenuItem
+          Caption = 'PHP'
+          OnClick = MenuItemSettingsEditorFormatPHPClick
+        end
+        object MenuItemSettingsEditorFormatPython: TMenuItem
           Caption = 'Python'
-          OnClick = MenuItemSettingsLanguagePythonClick
+          OnClick = MenuItemSettingsEditorFormatPythonClick
+        end
+        object MenuItemSettingsEditorFormatSQL: TMenuItem
+          Caption = 'SQL'
+          OnClick = MenuItemSettingsEditorFormatSQLClick
+        end
+        object MenuItemSettingsEditorFormatXML: TMenuItem
+          Caption = 'XML'
+          OnClick = MenuItemSettingsEditorFormatXMLClick
         end
       end
       object MenuItemSettingsStyle: TMenuItem
-        Caption = '&Style'
+        Caption = 'Editor Style'
         object MenuItemMemoSettingsEditorStyleNormal: TMenuItem
           Caption = 'Normal'
           OnClick = MenuItemMemoSettingsEditorStyleNormalClick
@@ -335,6 +383,19 @@ object FormMain: TFormMain
         object MenuItemMemoSettingsEditorStyleDark: TMenuItem
           Caption = 'Dark'
           OnClick = MenuItemMemoSettingsEditorStyleDarkClick
+        end
+      end
+      object N1: TMenuItem
+        Caption = '-'
+      end
+      object MenuItemSettingsContextMenu: TMenuItem
+        Caption = 'Context Menu'
+        object MenuItemSettingsContextMenuWindowsExplorer: TMenuItem
+          Caption = 'Windows Explorer'
+          object MenuItemSettingsContextMenuWindowsExplorerAdd: TMenuItem
+            Caption = 'Add'
+            OnClick = MenuItemSettingsContextMenuWindowsExplorerAddClick
+          end
         end
       end
     end
@@ -1092,8 +1153,8 @@ object FormMain: TFormMain
     top = 256
   end
   object PopupMenuPageControl: TPopupMenu
-    left = 376
-    top = 264
+    left = 400
+    top = 144
     object MenuItemPopupAddTab: TMenuItem
       Caption = '&Add Tab'
       OnClick = MenuItemPopupAddTabClick
@@ -1101,6 +1162,31 @@ object FormMain: TFormMain
     object MenuItemPopupCloseTab: TMenuItem
       Caption = '&Close Tab'
       OnClick = MenuItemPopupCloseTabClick
+    end
+  end
+  object PopupMenuEditor: TPopupMenu
+    Images = ImageListMain
+    ImagesWidth = 24
+    left = 400
+    top = 256
+    object MenuItemPopupEditorCopy: TMenuItem
+      Caption = 'Copy'
+      ImageIndex = 9
+      OnClick = MenuItemPopupEditorCopyClick
+    end
+    object MenuItemPopupEditorCut: TMenuItem
+      Caption = 'Cut'
+      ImageIndex = 10
+      OnClick = MenuItemPopupEditorCutClick
+    end
+    object MenuItemPopupEditorPaste: TMenuItem
+      Caption = 'Paste'
+      ImageIndex = 11
+      OnClick = MenuItemPopupEditorPasteClick
+    end
+    object MenuItemPopupEditorSelectAll: TMenuItem
+      Caption = 'Select All'
+      OnClick = MenuItemPopupEditorSelectAllClick
     end
   end
 end
