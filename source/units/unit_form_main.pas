@@ -31,7 +31,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Menus,
-  ComCtrls, PrintersDlgs, LCLType, ExtCtrls, FileUtil, SynEdit, RichMemo,
+  ComCtrls, PrintersDlgs, LCLType, ExtCtrls, FileUtil, lclintf, SynEdit, RichMemo,
   rz_an_cmp_pagecontrol, rz_an_cmp_statusbar;
 
 type
@@ -45,6 +45,8 @@ type
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
+    MenuItemHelpOnlineHelp: TMenuItem;
+    MenuItemSettingsEditorFormatDataframe: TMenuItem;
     MenuItemSettingsSpecialCharactersHide: TMenuItem;
     MenuItemSettingsSpecialCharactersShow: TMenuItem;
     MenuItemSettingsSpecialCharacters: TMenuItem;
@@ -155,6 +157,7 @@ type
     {1.2}
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure MenuItemFileExitClick(Sender: TObject);
+    procedure MenuItemHelpOnlineHelpClick(Sender: TObject);
     {1.30}
     procedure MenuItemSettingsContextMenuWindowsExplorerAddClick(Sender: TObject);
     {2. File Operation}
@@ -252,7 +255,9 @@ end;
 {1.1}
 procedure TFormMain.FormShow(Sender: TObject);
 begin
-  Self.RZANPageControlMain.RZAddSheet(VRZANVar.RZVarCallFileOnAppCreate);
+  Self.RZANPageControlMain.RZAddSheet(VRZANVar.RZVarCallFileOnAppCreate,
+    Ord(rz_an_var_EditorFormat_Default)
+  );
 end;
 
 {1.2}
@@ -507,8 +512,11 @@ procedure TFormMain.MenuItemHelpAboutClick(Sender: TObject);
 begin
   FormReadme := TFormReadme.Create(Self);
   FormReadme.Caption := 'About';
-  FormReadme.MemoMain.Lines := FormReadme.MemoAbout.Lines;
-  FormReadme.Show;
+  FormReadme.RichMemoAbout.Align := alClient;
+  FormReadme.RichMemoAbout.Visible := True;
+  FormReadme.RichMemoLicense.Visible := False;
+  FormReadme.RichMemoGPL.Visible := False;
+  FormReadme.ShowModal;
 end;
 
 {90.2}
@@ -516,8 +524,11 @@ procedure TFormMain.MenuItemHelpLicenseClick(Sender: TObject);
 begin
   FormReadme := TFormReadme.Create(Self);
   FormReadme.Caption := 'License';
-  FormReadme.MemoMain.Lines := FormReadme.MemoLicense.Lines;
-  FormReadme.Show;
+  FormReadme.RichMemoLicense.Align := alClient;
+  FormReadme.RichMemoLicense.Visible := True;
+  FormReadme.RichMemoAbout.Visible := False;
+  FormReadme.RichMemoGPL.Visible := False;
+  FormReadme.ShowModal;
 end;
 
 {90.3}
@@ -525,8 +536,16 @@ procedure TFormMain.MenuItemHelpGPLClick(Sender: TObject);
 begin
   FormReadme := TFormReadme.Create(Self);
   FormReadme.Caption := 'GPL';
-  FormReadme.MemoMain.Lines := FormReadme.MemoGPL.Lines;
-  FormReadme.Show;
+  FormReadme.RichMemoGPL.Align := alClient;
+  FormReadme.RichMemoGPL.Visible := True;
+  FormReadme.RichMemoLicense.Visible := False;
+  FormReadme.RichMemoAbout.Visible := False;
+  FormReadme.ShowModal;
+end;
+
+procedure TFormMain.MenuItemHelpOnlineHelpClick(Sender: TObject);
+begin
+  OpenURL('http://anoa-projects.com/anoa-notepad/');
 end;
 
 procedure TFormMain.MenuItemSettingsSpecialCharactersShowClick(Sender: TObject);

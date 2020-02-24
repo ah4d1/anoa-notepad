@@ -3,7 +3,7 @@ object FormMain: TFormMain
   Height = 711
   Top = 117
   Width = 1023
-  Caption = 'Anoa-Notepad - v.1.10-R'
+  Caption = 'Anoa-Notepad - v.1.11-R'
   ClientHeight = 681
   ClientWidth = 1023
   DesignTimePPI = 144
@@ -326,6 +326,9 @@ object FormMain: TFormMain
           Caption = 'Text'
           OnClick = MenuItemSettingsEditorFormatTextClick
         end
+        object MenuItemSettingsEditorFormatDataframe: TMenuItem
+          Caption = 'Dataframe'
+        end
         object MenuItem1: TMenuItem
           Caption = '-'
         end
@@ -401,6 +404,10 @@ object FormMain: TFormMain
     end
     object MenuItemHelp: TMenuItem
       Caption = '&Help'
+      object MenuItemHelpOnlineHelp: TMenuItem
+        Caption = 'Online Help ...'
+        OnClick = MenuItemHelpOnlineHelpClick
+      end
       object MenuItemHelpLicense: TMenuItem
         Caption = 'License ...'
         OnClick = MenuItemHelpLicenseClick

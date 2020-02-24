@@ -30,17 +30,20 @@ unit unit_form_readme;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
+  RichMemo;
 
 type
 
   { TFormReadme }
 
   TFormReadme = class(TForm)
-    MemoAbout: TMemo;
-    MemoLicense: TMemo;
-    MemoGPL: TMemo;
-    MemoMain: TMemo;
+    Image1: TImage;
+    PanelLeft: TPanel;
+    PanelLeft1: TPanel;
+    RichMemoAbout: TRichMemo;
+    RichMemoLicense: TRichMemo;
+    RichMemoGPL: TRichMemo;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure MemoMainChange(Sender: TObject);
