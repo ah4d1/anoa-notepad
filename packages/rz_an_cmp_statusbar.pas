@@ -181,7 +181,9 @@ begin
     else if Self.RZEditorFormat = rz_an_type_editorformat_Python then Self.Panels[Self.RZIndex.RZEditorFormat].Text := 'Python'
     else if Self.RZEditorFormat = rz_an_type_editorformat_SQL then Self.Panels[Self.RZIndex.RZEditorFormat].Text := 'SQL'
     else if Self.RZEditorFormat = rz_an_type_editorformat_XML then Self.Panels[Self.RZIndex.RZEditorFormat].Text := 'XML'
+    else if Self.RZEditorFormat = rz_an_type_editorformat_Dataframe then Self.Panels[Self.RZIndex.RZEditorFormat].Text := 'Dataframe'
     else if Self.RZEditorFormat = rz_an_type_editorformat_Text then Self.Panels[Self.RZIndex.RZEditorFormat].Text := 'Text'
+    else if Self.RZEditorFormat = rz_an_type_editorformat_All then Self.Panels[Self.RZIndex.RZEditorFormat].Text := '*'
   ;
 end;
 

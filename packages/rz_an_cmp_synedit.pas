@@ -262,7 +262,7 @@ end;
 procedure TRZANCustomSynEdit.SetRZFileExt (const AValue : string);
 begin
   Self.FRZFileExt := AValue;
-  Self.RZEditorFormat := VRZANVar.GetRZEditorFormat(Self.FRZFileExt);
+  // Self.RZEditorFormat := VRZANVar.GetRZEditorFormat(Self.FRZFileExt);
 end;
 
 {3. Text Editing}

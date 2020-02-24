@@ -58,6 +58,7 @@ begin
     + '|Python Files (*.py)|*.py'
     + '|SQL Files (*.sql)|*.sql'
     + '|XML Files (*.xml)|*.xml'
+    + '|Data Files (*.csv)|*.csv'
     + '|Text Files (*.txt)|*.txt'
     + '|All Files (*.*)|*.*'
   ;

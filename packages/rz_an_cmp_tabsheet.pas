@@ -31,7 +31,7 @@ interface
 
 uses
   Classes, SysUtils, ComCtrls, Controls, Dialogs, Graphics, ExtCtrls, Grids, StdCtrls, Menus,
-  Messages, LCLIntf, rz_an_cmp_richmemo, rz_an_cmp_synedit, rz_an_cmp_statusbar,
+  Messages, LCLIntf, TypInfo, rz_an_cmp_richmemo, rz_an_cmp_synedit, rz_an_cmp_dataeditor, rz_an_cmp_statusbar,
   rz_an_cmp_opendialog, rz_an_cmp_savedialog, rz_an_pas_var;
 
 type
@@ -122,6 +122,8 @@ type
     RZTextEditor : TRZANRichMemo;
     {1.1.4}
     RZSynEditor : TRZANSynEdit;
+    {1.1.?}
+    RZDataEditor : TRZANDataEditor;
     {1. Application}
     {1.1.2}
     constructor Create (AOwner : TComponent); override;
@@ -131,7 +133,7 @@ type
     {2.2}
     function RZClose : Boolean;
     {2.3}
-    procedure RZOpen (AFileName : TFileName);
+    procedure RZOpen (AFileName : TFileName; AEditorFormatIndex : Integer);
     {2.4}
     procedure RZSave (AFileName : TFileName);
     {3. Text Editing}
@@ -149,7 +151,7 @@ type
     procedure RZSelectAll;
     {5. Editor Format}
     {5.20}
-    procedure RZChangeEditorFormat (AFormat : rz_an_type_EditorFormat);
+    procedure RZChangeEditorFormat (ANewFormat : rz_an_type_EditorFormat);
   end;
 
   TRZANTabSheet = class(TRZANCustomTabSheet)
@@ -203,9 +205,14 @@ begin
   Self.RZSynEditor.Parent := Self;
   Self.RZSynEditor.Align := alClient;
   Self.RZSynEditor.Visible := False;
+  {1.1.?}
+  Self.RZDataEditor := TRZANDataEditor.Create(Self);
+  Self.RZDataEditor.Parent := Self;
+  Self.RZDataEditor.Align := alClient;
+  Self.RZDataEditor.Visible := False;
   {5. Editor Format}
   {5.20}
-  Self.RZEditorFormat := rz_an_type_editorformat_Text;
+  Self.RZEditorFormat := rz_an_var_EditorFormat_Default;
 end;
 
 {2. File Operation}
@@ -242,9 +249,11 @@ begin
 end;
 
 {2.3}
-procedure TRZANCustomTabSheet.RZOpen (AFileName : TFileName);
+procedure TRZANCustomTabSheet.RZOpen (AFileName : TFileName; AEditorFormatIndex : Integer);
 begin
   Self.RZFileName := AFileName;
+  Self.RZEditorFormat := VRZANVar.GetRZEditorFormat(AEditorFormatIndex);
+  Self.RZEditorType := VRZANVar.GetRZEditorType(AEditorFormatIndex);
   if (Trim(AFileName) <> '') then
   begin
     if Self.RZEditorType = rz_an_type_editortype_text then
@@ -254,6 +263,10 @@ begin
     else if Self.RZEditorType = rz_an_type_editortype_syntax then
     begin
       Self.RZSynEditor.RZOpen(Self.RZFileName);
+    end
+    else if Self.RZEditorType = rz_an_type_editortype_dataframe then
+    begin
+      Self.RZDataEditor.RZOpen(Self.RZFileName);
     end;
   end;
   Self.RZCaretPosX := 0;
@@ -298,8 +311,6 @@ end;
 procedure TRZANCustomTabSheet.SetRZFileExt (const AValue : string);
 begin
   Self.FRZFileExt := AValue;
-  Self.RZEditorFormat := VRZANVar.GetRZEditorFormat(Self.FRZFileExt);
-  Self.RZEditorType := VRZANVar.GetRZEditorType(Self.FRZFileExt);
 end;
 
 {3. Text Editing}
@@ -375,12 +386,16 @@ procedure TRZANCustomTabSheet.SetRZEditorFormat (AValue : rz_an_type_EditorForma
 begin
   Self.FRZEditorFormat := AValue;
   {Update Editor}
-  if Self.RZEditorFormat <> rz_an_type_editorformat_Text then
+  if VRZANVar.IsRZEditorFormatLanguage(Self.RZEditorFormat) then
   begin
     Self.RZEditorType := rz_an_type_editortype_syntax;
     Self.RZSynEditor.RZEditorFormat := Self.RZEditorFormat;
   end
-  else
+  else if VRZANVar.IsRZEditorFormatDataframe(Self.RZEditorFormat) then
+  begin
+    Self.RZEditorType := rz_an_type_editortype_dataframe;
+  end
+  else if VRZANVar.IsRZEditorFormatText(Self.RZEditorFormat) then
   begin
     Self.RZEditorType := rz_an_type_editortype_text;
   end;
@@ -389,15 +404,23 @@ begin
 end;
 
 {5.20}
-procedure TRZANCustomTabSheet.RZChangeEditorFormat (AFormat : rz_an_type_EditorFormat);
+procedure TRZANCustomTabSheet.RZChangeEditorFormat (ANewFormat : rz_an_type_EditorFormat);
 var
   i,LLinesCount : Cardinal;
   LCurrentEditorFormat : rz_an_type_EditorFormat;
   LIsCurrentEditorFormatLanguage,LIsNextEditorFormatLanguage : Boolean;
 begin
   LCurrentEditorFormat := Self.RZEditorFormat;
+  if LCurrentEditorFormat = rz_an_type_editorformat_Dataframe then
+  begin
+    MessageDlg('Not available','This feature is currently not available yet',
+      mtInformation,[mbOK],0
+    );
+    Exit;
+  end;
+  if LCurrentEditorFormat = ANewFormat then Exit;
   LIsCurrentEditorFormatLanguage := VRZANVar.IsRZEditorFormatLanguage(LCurrentEditorFormat);
-  LIsNextEditorFormatLanguage := VRZANVar.IsRZEditorFormatLanguage(AFormat);
+  LIsNextEditorFormatLanguage := VRZANVar.IsRZEditorFormatLanguage(ANewFormat);
   {Check Lines Count}
   if not(LIsCurrentEditorFormatLanguage) then
     LLinesCount := Self.RZTextEditor.Lines.Count
@@ -425,7 +448,7 @@ begin
     end;
   end;
   {Update Variable}
-  Self.RZEditorFormat := AFormat;
+  Self.RZEditorFormat := ANewFormat;
 end;
 
 {5.30}
@@ -436,11 +459,19 @@ begin
   begin
     Self.RZTextEditor.Visible := True;
     Self.RZSynEditor.Visible := False;
+    Self.RZDataEditor.Visible := False;
+  end
+  else if Self.RZEditorType = rz_an_type_editortype_dataframe then
+  begin
+    Self.RZDataEditor.Visible := True;
+    Self.RZTextEditor.Visible := False;
+    Self.RZSynEditor.Visible := False;
   end
   else if Self.RZEditorType = rz_an_type_editortype_syntax then
   begin
     Self.RZSynEditor.Visible := True;
     Self.RZTextEditor.Visible := False;
+    Self.RZDataEditor.Visible := False;
   end;
 end;
 
@@ -452,6 +483,7 @@ begin
   Self.FRZEditorStyle := AValue;
   Self.RZTextEditor.RZStyle := Self.FRZEditorStyle;
   Self.RZSynEditor.RZStyle := Self.FRZEditorStyle;
+  Self.RZDataEditor.RZStyle := Self.FRZEditorStyle;
 end;
 
 {7. Caret}

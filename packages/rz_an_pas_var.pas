@@ -34,9 +34,13 @@ uses
 
 type
   rz_an_type_OS = (rz_an_type_os_windows,rz_an_type_os_linux);
-  rz_an_type_EditorType = (rz_an_type_editortype_text,rz_an_type_editortype_syntax);
+  rz_an_type_EditorType = (
+    rz_an_type_editortype_text,
+    rz_an_type_editortype_dataframe,
+    rz_an_type_editortype_syntax
+  );
   rz_an_type_EditorFormat = (
-    rz_an_type_editorformat_Basic,
+    rz_an_type_editorformat_Basic = 1, // start at 1 as FilterIndex also start at 1
     rz_an_type_editorformat_Cpp,
     rz_an_type_editorformat_CSS,
     rz_an_type_editorformat_HTML,
@@ -47,10 +51,13 @@ type
     rz_an_type_editorformat_Python,
     rz_an_type_editorformat_SQL,
     rz_an_type_editorformat_XML,
-    rz_an_type_editorformat_Text
+    rz_an_type_editorformat_Dataframe,
+    rz_an_type_editorformat_Text,
+    rz_an_type_editorformat_All
   );
   rz_an_type_EditorFormatLanguage = rz_an_type_editorformat_Basic..rz_an_type_editorformat_XML;
-  // rz_an_type_EditorFormatText = rz_an_type_editorformat_Text;
+  rz_an_type_EditorFormatDataframe = rz_an_type_editorformat_Dataframe..rz_an_type_editorformat_Dataframe;
+  rz_an_type_EditorFormatText = rz_an_type_editorformat_Text..rz_an_type_editorformat_All;
   rz_an_type_Status = (rz_an_type_status_Ready,rz_an_type_status_Modified,rz_an_type_status_Saved);
   rz_an_type_Style = (rz_an_type_style_Normal,rz_an_type_style_Dark);
 
@@ -70,7 +77,9 @@ type
     RZBackground : TColor;
     RZText : TColor;
     RZLineHighlight : TColor;
+    RZRowHighlight : TColor;
     RZGutter : TColor;
+    RZHeader : TColor;
     RZBasic : TRZANLanguageColor;
     RZCpp : TRZANLanguageColor;
     RZCSS : TRZANLanguageColor;
@@ -92,15 +101,24 @@ type
     RZMainColor : TRZANMainColor;
     procedure Init;
     function GetRZOS : rz_an_type_OS;
-    function GetRZEditorFormat (AFileExt : string) : rz_an_type_EditorFormat;
+    function GetRZEditorFormat (AFilterIndex : Integer) : rz_an_type_EditorFormat;
     function IsRZEditorFormatLanguage (AEditorFormat : rz_an_type_EditorFormat) : Boolean;
-    function GetRZEditorType (AFileExt : string) : rz_an_type_EditorType;
+    function IsRZEditorFormatDataframe (AEditorFormat : rz_an_type_EditorFormat) : Boolean;
+    function IsRZEditorFormatText (AEditorFormat : rz_an_type_EditorFormat) : Boolean;
+    function GetRZEditorType (AFilterIndex : Integer) : rz_an_type_EditorType;
   end;
 
 const
   {Image Index}
+  {$IFDEF WINDOWS}
+    rz_an_var_CmpPath = 'C:\cmpLaz\rz_anoa_notepad\'; // define your Windows path here
+  {$ENDIF}
+  {$IFDEF UNIX}
+    rz_an_var_CmpPath = '/home/ahadi/cmpLazarus/rz_anoa_notepad/'; // or define your Linux path here
+  {$ENDIF}
   rz_an_var_ImageIndex_Saved = 8;
   rz_an_var_ImageIndex_Modified = 14;
+  rz_an_var_EditorFormat_Default = rz_an_type_editorformat_Text;
 
  var
    VRZANVar : TRZANVar;
@@ -133,8 +151,10 @@ procedure TRZANVar.Init;
 begin
   Self.RZMainColor.RZBackground := clWhite;
   Self.RZMainColor.RZText := clBlack;
-  Self.RZMainColor.RZLineHighlight := $FFCDCD; // $00D4D4D4; // $00FAFAFA;
+  Self.RZMainColor.RZLineHighlight := $FFCDCD;
+  Self.RZMainColor.RZRowHighlight := clNavy;
   Self.RZMainColor.RZGutter := $00E3E3E3;
+  Self.RZMainColor.RZHeader := $00CDCDCD;
   {Languages}
   Self.RZMainColor.RZBasic := TRZANLanguageColor.Create(rz_an_type_style_Normal);
   Self.RZMainColor.RZCpp := TRZANLanguageColor.Create(rz_an_type_style_Normal);
@@ -159,21 +179,9 @@ begin
   {$ENDIF}
 end;
 
-function TRZANVar.GetRZEditorFormat (AFileExt : string) : rz_an_type_EditorFormat;
+function TRZANVar.GetRZEditorFormat (AFilterIndex : Integer) : rz_an_type_EditorFormat;
 begin
-  if (AFileExt = '.bas') then Result := rz_an_type_editorformat_Basic
-    else if (AFileExt = '.cpp') then Result := rz_an_type_editorformat_Cpp
-    else if (AFileExt = '.css') then Result := rz_an_type_editorformat_CSS
-    else if (AFileExt = '.htm') or (AFileExt = '.html') then Result := rz_an_type_editorformat_HTML
-    else if (AFileExt = '.java') or (AFileExt = '.class') then Result := rz_an_type_editorformat_Java
-    else if (AFileExt = '.js') then Result := rz_an_type_editorformat_Javascript
-    else if (AFileExt = '.pas') then Result := rz_an_type_editorformat_Pascal
-    else if (AFileExt = '.php') then Result := rz_an_type_editorformat_PHP
-    else if (AFileExt = '.py') then Result := rz_an_type_editorformat_Python
-    else if (AFileExt = '.sql') then Result := rz_an_type_editorformat_SQL
-    else if (AFileExt = '.xml') then Result := rz_an_type_editorformat_XML
-    else Result := rz_an_type_editorformat_Text
-  ;
+  Result := rz_an_type_EditorFormat(AFilterIndex);
 end;
 
 function TRZANVar.IsRZEditorFormatLanguage (AEditorFormat : rz_an_type_EditorFormat) : Boolean;
@@ -195,13 +203,53 @@ begin
   Result := LResult;
 end;
 
-function TRZANVar.GetRZEditorType (AFileExt : string) : rz_an_type_EditorType;
+function TRZANVar.IsRZEditorFormatDataframe (AEditorFormat : rz_an_type_EditorFormat) : Boolean;
+var
+  i : Byte;
+  LResult : Boolean;
+  LEditorFormatName : string;
+begin
+  LResult := False;
+  for i := Ord(Low(rz_an_type_EditorFormatDataframe)) to Ord(High(rz_an_type_EditorFormatDataframe)) do
+  begin
+    LEditorFormatName := GetEnumName(TypeInfo(rz_an_type_EditorFormatDataframe), Ord(i));
+    if GetEnumName(TypeInfo(rz_an_type_EditorFormatDataframe),Ord(rz_an_type_EditorFormatDataframe(AEditorFormat))) = LEditorFormatName then
+    begin
+      LResult := True;
+      Break;
+    end;
+  end;
+  Result := LResult;
+end;
+
+function TRZANVar.IsRZEditorFormatText (AEditorFormat : rz_an_type_EditorFormat) : Boolean;
+var
+  i : Byte;
+  LResult : Boolean;
+  LEditorFormatName : string;
+begin
+  LResult := False;
+  for i := Ord(Low(rz_an_type_EditorFormatText)) to Ord(High(rz_an_type_EditorFormatText)) do
+  begin
+    LEditorFormatName := GetEnumName(TypeInfo(rz_an_type_EditorFormatText), Ord(i));
+    if GetEnumName(TypeInfo(rz_an_type_EditorFormatText),Ord(rz_an_type_EditorFormatText(AEditorFormat))) = LEditorFormatName then
+    begin
+      LResult := True;
+      Break;
+    end;
+  end;
+  Result := LResult;
+end;
+
+function TRZANVar.GetRZEditorType (AFilterIndex : Integer) : rz_an_type_EditorType;
 var
   LRZEditorFormat : rz_an_type_EditorFormat;
 begin
-  LRZEditorFormat := Self.GetRZEditorFormat(AFileExt);
+  LRZEditorFormat := Self.GetRZEditorFormat(AFilterIndex);
   if Self.IsRZEditorFormatLanguage(LRZEditorFormat) then Result := rz_an_type_editortype_syntax
-  else Result := rz_an_type_editortype_text;
+    else if Self.IsRZEditorFormatDataframe(LRZEditorFormat) then Result := rz_an_type_editortype_dataframe
+    else if Self.IsRZEditorFormatText(LRZEditorFormat) then Result := rz_an_type_editortype_text
+  ;
 end;
 
 end.

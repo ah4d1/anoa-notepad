@@ -32,7 +32,7 @@ interface
 uses
   Classes, SysUtils, ComCtrls, Controls, Dialogs, Graphics, Forms, Menus, RichMemo,
   SynEdit, rz_an_cmp_statusbar, rz_an_cmp_opendialog, rz_an_cmp_savedialog, rz_an_pas_var,
-  rz_an_cmp_tabsheet, rz_an_cmp_richmemo, rz_an_cmp_synedit;
+  rz_an_cmp_tabsheet, rz_an_cmp_richmemo, rz_an_cmp_synedit, rz_an_cmp_dataeditor;
 
 type
 
@@ -75,7 +75,7 @@ type
     {2. File Operation}
     {2.1}
     procedure RZAddSheet; overload;
-    procedure RZAddSheet (AFileName : TFileName); overload;
+    procedure RZAddSheet (AFileName : TFileName; AEditorFormatIndex : Integer); overload;
     {2.2}
     procedure RZCloseSheet;
     {2.3}
@@ -146,11 +146,11 @@ end;
 {2.1}
 procedure TRZANCustomPageControl.RZAddSheet;
 begin
-  Self.RZAddSheet('');
+  Self.RZAddSheet('',Ord(rz_an_var_EditorFormat_Default));
 end;
 
 {2.1}
-procedure TRZANCustomPageControl.RZAddSheet (AFileName : TFileName);
+procedure TRZANCustomPageControl.RZAddSheet (AFileName : TFileName; AEditorFormatIndex : Integer);
 begin
   with TRZANTabSheet.Create(Self) do
   begin
@@ -158,7 +158,7 @@ begin
     RZTabId := Self.RZTabId;
     RZPopupMenu := Self.RZPopupMenu;
     RZANStatusBar := Self.RZANStatusBar;
-    RZOpen(AFileName);
+    RZOpen(AFileName,AEditorFormatIndex);
     Show;
     Self.RZTabId := Self.RZTabId + 1;
   end;
@@ -178,13 +178,13 @@ end;
 {2.3}
 procedure TRZANCustomPageControl.RZOpenFile;
 begin
-  Self.RZANOpenDialog.FilterIndex := Ord(Self.RZActiveTabSheet.RZEditorFormat) + 1; // Filter Index begin at 1
+  Self.RZANOpenDialog.FilterIndex := Ord(Self.RZActiveTabSheet.RZEditorFormat); // Filter Index begin at 1
   if Self.RZANOpenDialog.Execute then
   begin
     if Self.RZTabInit then
-      Self.RZActiveTabSheet.RZOpen(Self.RZANOpenDialog.FileName)
+      Self.RZActiveTabSheet.RZOpen(Self.RZANOpenDialog.FileName,Self.RZANOpenDialog.FilterIndex)
     else
-      Self.RZAddSheet(Self.RZANOpenDialog.FileName);
+      Self.RZAddSheet(Self.RZANOpenDialog.FileName,Self.RZANOpenDialog.FilterIndex);
     ;
     Self.RZTabInit := False;
   end;
@@ -241,6 +241,14 @@ begin
     Self.RZActiveTabSheet.RZANStatusBar.RZEditorFormat := Self.RZActiveTabSheet.RZEditorFormat;
     Self.RZActiveTabSheet.RZANStatusBar.RZCaretPosX := Self.RZActiveTabSheet.RZTextEditor.RZCaretPosX;
     Self.RZActiveTabSheet.RZANStatusBar.RZCaretPosY := Self.RZActiveTabSheet.RZTextEditor.RZCaretPosY;
+    Self.RZActiveTabSheet.RZANStatusBar.RZFileName := Self.RZActiveTabSheet.RZFileName;
+  end
+  else if Self.RZActiveTabSheet.RZEditorType = rz_an_type_editortype_dataframe then
+  begin
+    Self.RZActiveTabSheet.RZANStatusBar.RZStatus := Self.RZActiveTabSheet.RZStatus;
+    Self.RZActiveTabSheet.RZANStatusBar.RZEditorFormat := Self.RZActiveTabSheet.RZEditorFormat;
+    Self.RZActiveTabSheet.RZANStatusBar.RZCaretPosX := Self.RZActiveTabSheet.RZDataEditor.RZCaretPosX;
+    Self.RZActiveTabSheet.RZANStatusBar.RZCaretPosY := Self.RZActiveTabSheet.RZDataEditor.RZCaretPosY;
     Self.RZActiveTabSheet.RZANStatusBar.RZFileName := Self.RZActiveTabSheet.RZFileName;
   end
   else if Self.RZActiveTabSheet.RZEditorType = rz_an_type_editortype_syntax then

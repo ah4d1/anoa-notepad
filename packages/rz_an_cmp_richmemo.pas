@@ -31,7 +31,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, ComCtrls, Dialogs,
-  StdCtrls, RichMemo, LCLType, LCLIntf, Messages, Clipbrd, rz_an_pas_var;
+  StdCtrls, RichMemo, LCLType, LCLIntf, Messages, Clipbrd, rz_an_pas_var, rz_an_pas_tools;
 
 type
 
@@ -205,13 +205,13 @@ begin
   Self.FRZStyle := AValue;
   if Self.FRZStyle = rz_an_type_style_Normal then
   begin
-    Self.Color := clWhite;
-    Self.Font.Color := clBlack;
+    Self.Color := VRZANVar.RZMainColor.RZBackground;
+    Self.Font.Color := VRZANVar.RZMainColor.RZText;
   end
   else if Self.FRZStyle = rz_an_type_style_Dark then
   begin
-    Self.Color := clBlack;
-    Self.Font.Color := clWhite;
+    Self.Color := VRZANTools.ComplementaryColor(VRZANVar.RZMainColor.RZBackground);
+    Self.Font.Color := VRZANTools.ComplementaryColor(VRZANVar.RZMainColor.RZText);
   end;
 end;
 
